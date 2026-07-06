@@ -1,136 +1,36 @@
-# TelmaFood 🍳
+This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
-A dynamic recipe discovery platform that helps users explore, search, and save their favorite recipes. Built with **JavaScript**, **HTML**, and **CSS**, TelmaFood offers an intuitive interface with advanced filtering options and a responsive design.
+## Getting Started
 
-## ✨ Features
+First, run the development server:
 
-- 🔍 **Smart Recipe Search** with multiple filtering options
-- 🏷️ **Health Preference Tags** for dietary restrictions
-- 💾 **Recipe Saving** functionality
-- 🌙 **Dark/Light Theme** support
-- 📱 **Responsive Design** for all devices
-- ⚡ **Lazy Loading** for optimal performance
-- 🦴 **Skeleton Screens** for better loading experience
-- 🎯 **Accessibility** focused development
+```bash
+npm run dev
+# or
+yarn dev
+# or
+pnpm dev
+# or
+bun dev
+```
 
-## 🚀 Tech Stack
+Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-- **Vanilla JavaScript** - Core functionality
-- **HTML5** - Structure and semantics
-- **CSS3** - Styling and animations
-- **[Edamam API](https://www.edamam.com/)** - Recipe data
-- **Local Storage** - Save recipe functionality
-- **Material Icons** - UI icons
+You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
-## 🎯 Performance Metrics
+This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
-- **Performance:** 96/100
-- **Accessibility:** 95/100
-- **Best Practices:** 100/100
-- **SEO:** 100/100
+## Learn More
 
-## 🛠️ Installation
+To learn more about Next.js, take a look at the following resources:
 
-1. **Clone the repository:**
+- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
+- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
 
-   ```bash
-   git clone https://github.com/mohammadhossein-asadi/telmafood.git
-   ```
+You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
 
-2. **Navigate to project directory:**
+## Deploy on Vercel
 
-   ```bash
-   cd telmafood
-   ```
+The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
-3. **Open with live server or directly in browser:**
-   ```bash
-   # Using live-server (if installed)
-   live-server
-   ```
-
-## 🎮 Key Features
-
-### **Recipe Search**
-
-- Advanced filtering options for cooking time, ingredients, and calories
-- Real-time search results
-- Multiple cuisine type filters
-
-### **Health Preferences**
-
-- 30+ dietary filters including:
-  - Vegetarian/Vegan options
-  - Gluten-free recipes
-  - Allergen-free choices
-  - Diet-specific recipes
-
-### **Recipe Management**
-
-- Save favorite recipes
-- Quick access to saved recipes
-- Detailed recipe information
-
-## 🌟 Components
-
-### **Search Component**
-
-- Real-time search functionality
-- Search suggestions
-- Error handling
-
-### **Filter System**
-
-- Multiple filter categories
-- Combination filtering
-- Clear filter option
-
-### **Recipe Cards**
-
-- Loading skeletons
-- Save functionality
-- Cooking time display
-
-## 🌐 Live Demo
-
-Experience TelmaFood live: [TelmaFood App](https://telmafood.vercel.app/)
-
-## 📱 Responsive Design
-
-- **Mobile-first** approach
-- **Tablet** optimized layout
-- **Desktop** enhanced experience
-- **Cross-browser** compatibility
-
-## 🤝 Contributing
-
-Contributions are welcome! Feel free to:
-
-1. Fork the project
-2. Create your feature branch:
-   ```bash
-   git checkout -b feature/AmazingFeature
-   ```
-3. Commit your changes:
-   ```bash
-   git commit -m 'Add some AmazingFeature'
-   ```
-4. Push to the branch:
-   ```bash
-   git push origin feature/AmazingFeature
-   ```
-5. Open a Pull Request
-
-## 📝 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## 🙏 Acknowledgments
-
-- Recipe data provided by [Edamam API](https://www.edamam.com/)
-- Icons from Material Design Icons
-- Special thanks to the open-source community
-
----
-
-Created with ❤️ by [Mohammadhossein Asadi](https://github.com/mohammadhossein-asadi)
+Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.

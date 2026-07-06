@@ -1,0 +1,203 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+
+/* ========================================
+   shadcn/ui Theme Variables (Tailwind v4)
+   ======================================== */
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-hover: var(--primary-hover);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+
+  --font-heading: "DM Serif Display", serif;
+  --font-body: "DM Sans", sans-serif;
+
+  --animate-accordion-down: accordion-down 0.2s ease-out;
+  --animate-accordion-up: accordion-up 0.2s ease-out;
+}
+
+@keyframes accordion-down {
+  from { height: 0; }
+  to { height: var(--radix-accordion-content-height); }
+}
+
+@keyframes accordion-up {
+  from { height: var(--radix-accordion-content-height); }
+  to { height: 0; }
+}
+
+/* ========================================
+   Light Theme (default)
+   ======================================== */
+
+:root {
+  --background: hsl(210, 33%, 98%);
+  --foreground: hsl(210, 11%, 15%);
+  --card: hsl(0, 0%, 100%);
+  --card-foreground: hsl(210, 11%, 15%);
+  --popover: hsl(0, 0%, 100%);
+  --popover-foreground: hsl(210, 11%, 15%);
+  --primary: hsl(17, 100%, 60%);
+  --primary-hover: hsl(17, 100%, 52%);
+  --primary-foreground: hsl(0, 0%, 100%);
+  --secondary: hsl(200, 68%, 59%);
+  --secondary-foreground: hsl(0, 0%, 100%);
+  --muted: hsl(210, 20%, 95%);
+  --muted-foreground: hsl(210, 8%, 45%);
+  --accent: hsl(200, 50%, 95%);
+  --accent-foreground: hsl(210, 11%, 15%);
+  --destructive: hsl(1, 73%, 42%);
+  --destructive-foreground: hsl(0, 0%, 100%);
+  --border: hsl(210, 15%, 90%);
+  --input: hsl(210, 12%, 80%);
+  --ring: hsl(17, 100%, 60%);
+  --chart-1: hsl(17, 100%, 60%);
+  --chart-2: hsl(200, 68%, 59%);
+  --chart-3: hsl(140, 45%, 50%);
+  --chart-4: hsl(280, 50%, 55%);
+  --chart-5: hsl(1, 73%, 42%);
+  --radius: 0.75rem;
+
+  --primary-container: hsl(17, 100%, 96%);
+  --active-indicator: hsl(200, 50%, 95%);
+  --image-background: hsl(210, 20%, 92%);
+  --overlay: hsla(210, 11%, 15%, 0.5);
+  --header-height: 64px;
+  --mobile-nav-height: 80px;
+}
+
+/* ========================================
+   Dark Theme
+   ======================================== */
+
+[data-theme="dark"] {
+  --background: hsl(210, 15%, 12%);
+  --foreground: hsl(210, 10%, 90%);
+  --card: hsl(210, 12%, 16%);
+  --card-foreground: hsl(210, 10%, 90%);
+  --popover: hsl(210, 12%, 16%);
+  --popover-foreground: hsl(210, 10%, 90%);
+  --primary: hsl(17, 100%, 65%);
+  --primary-hover: hsl(17, 100%, 58%);
+  --primary-foreground: hsl(0, 0%, 100%);
+  --secondary: hsl(200, 68%, 50%);
+  --secondary-foreground: hsl(0, 0%, 100%);
+  --muted: hsl(210, 12%, 18%);
+  --muted-foreground: hsl(210, 8%, 55%);
+  --accent: hsl(200, 40%, 20%);
+  --accent-foreground: hsl(210, 10%, 90%);
+  --destructive: hsl(1, 69%, 59%);
+  --destructive-foreground: hsl(0, 0%, 100%);
+  --border: hsl(210, 10%, 22%);
+  --input: hsl(210, 10%, 28%);
+  --ring: hsl(17, 100%, 65%);
+  --chart-1: hsl(17, 100%, 65%);
+  --chart-2: hsl(200, 68%, 50%);
+  --chart-3: hsl(140, 45%, 45%);
+  --chart-4: hsl(280, 45%, 50%);
+  --chart-5: hsl(1, 69%, 59%);
+
+  --primary-container: hsl(210, 12%, 18%);
+  --active-indicator: hsl(200, 30%, 18%);
+  --image-background: hsl(210, 10%, 22%);
+  --overlay: hsla(210, 10%, 90%, 0.5);
+}
+
+/* ========================================
+   Base Styles
+   ======================================== */
+
+*,
+*::before,
+*::after {
+  border-color: var(--border);
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: "DM Sans", sans-serif;
+  font-size: 1.6rem;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+/* ========================================
+   Typography (use Tailwind utilities instead)
+   ======================================== */
+
+/* ========================================
+   Skeleton Animation
+   ======================================== */
+
+@keyframes skeleton-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+.skeleton {
+  animation: skeleton-pulse 1.5s ease-in-out infinite;
+  background: var(--muted);
+  border-radius: 8px;
+}
+
+/* ========================================
+   Fade In Animation
+   ======================================== */
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.animate-fade-in {
+  animation: fade-in 0.3s ease-out;
+}
+
+/* ========================================
+   Hide scrollbar but keep scroll
+   ======================================== */
+
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
