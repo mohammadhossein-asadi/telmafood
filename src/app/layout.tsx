@@ -21,9 +21,32 @@ const dmSerifDisplay = DM_Serif_Display({
 });
 
 export const metadata: Metadata = {
-  title: "TelmaFood - Recipe Discovery",
+  title: {
+    default: "TelmaFood - Recipe Discovery",
+    template: "%s | TelmaFood",
+  },
   description:
-    "Explore, search, and save your favorite recipes with TelmaFood",
+    "Explore, search, and save your favorite recipes from around the world. Filter by cuisine, diet, meal type, and more.",
+  keywords: ["recipes", "cooking", "food", "cuisine", "diet", "meal planning"],
+  authors: [{ name: "Mohammadhossein Asadi" }],
+  openGraph: {
+    type: "website",
+    locale: "en_US",
+    siteName: "TelmaFood",
+    title: "TelmaFood - Recipe Discovery",
+    description:
+      "Explore, search, and save your favorite recipes from around the world.",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "TelmaFood - Recipe Discovery",
+    description:
+      "Explore, search, and save your favorite recipes from around the world.",
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
 };
 
 export default function RootLayout({
@@ -56,6 +79,12 @@ export default function RootLayout({
         />
       </head>
       <body className="min-h-screen flex flex-col bg-background text-foreground font-body antialiased">
+        <a
+          href="#main-content"
+          className="sr-only focus:not-sr-only focus:absolute focus:z-[100] focus:p-4 focus:bg-primary focus:text-white"
+        >
+          Skip to content
+        </a>
         <ThemeProvider
           attribute="data-theme"
           defaultTheme="system"
@@ -64,7 +93,7 @@ export default function RootLayout({
         >
           <QueryProvider>
             <Header />
-            <main className="flex-1 pb-20 md:pb-0">
+            <main id="main-content" className="flex-1 pb-20 md:pb-0">
               {children}
             </main>
             <Footer />

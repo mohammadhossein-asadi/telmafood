@@ -14,9 +14,14 @@ interface FilterRadioProps {
   onChange: (value: string) => void;
 }
 
-export function FilterRadio({ name, options, value, onChange }: FilterRadioProps) {
+export function FilterRadio({
+  name,
+  options,
+  value,
+  onChange,
+}: FilterRadioProps) {
   return (
-    <div className="space-y-2">
+    <div role="radiogroup" aria-label={name} className="space-y-2">
       {options.map((option) => (
         <div key={option.value} className="flex items-center gap-2 py-1">
           <input
@@ -26,7 +31,7 @@ export function FilterRadio({ name, options, value, onChange }: FilterRadioProps
             value={option.value}
             checked={value === option.value}
             onChange={(e) => onChange(e.target.value)}
-            className="w-4 h-4 text-primary border-border focus:ring-primary"
+            className="w-4 h-4 accent-primary cursor-pointer"
           />
           <Label
             htmlFor={`${name}-${option.value}`}

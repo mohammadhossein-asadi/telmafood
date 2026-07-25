@@ -6,6 +6,7 @@ import { SearchBar } from "@/components/search/SearchBar";
 import { FilterBar } from "@/components/filters/FilterBar";
 import { RecipeGrid } from "@/components/recipe/RecipeGrid";
 import { RecipeCardSkeleton } from "@/components/recipe/RecipeCardSkeleton";
+import { Button } from "@/components/ui/button";
 import { useRecipes } from "@/lib/hooks/useRecipes";
 import type { FilterParams } from "@/lib/api/types";
 
@@ -56,9 +57,12 @@ function RecipesContent() {
             </div>
           ) : isError ? (
             <div className="text-center py-12">
-              <p className="text-base text-foreground/60">
+              <p className="text-base text-foreground/60 mb-4">
                 Failed to load recipes. Please try again.
               </p>
+              <Button variant="outline" onClick={() => window.location.reload()}>
+                Try again
+              </Button>
             </div>
           ) : recipes.length === 0 ? (
             <div className="text-center py-12">
