@@ -84,8 +84,3 @@ export interface FilterParams {
   ingr?: string;
 }
 
-export interface SavedRecipe {
-  id: string;
-  recipe: Recipe;
-  savedAt: number;
-}

@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { Clock, Users, ExternalLink } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -8,7 +9,6 @@ import { Separator } from "@/components/ui/separator";
 import { SaveButton } from "./SaveButton";
 import { extractIdFromUri } from "@/lib/api/edamam";
 import type { Recipe } from "@/lib/api/types";
-import Link from "next/link";
 
 interface RecipeDetailProps {
   recipe: Recipe;
