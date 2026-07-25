@@ -12,7 +12,7 @@ export function Hero() {
           ingredients, cuisine, or dietary preferences.
         </p>
         <div className="max-w-xl mx-auto">
-          <SearchBar large placeholder="What would you like to cook?" />
+          <SearchBar size="large" placeholder="What would you like to cook?" />
         </div>
       </div>
     </section>

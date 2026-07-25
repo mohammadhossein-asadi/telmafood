@@ -2,17 +2,21 @@
 
 import Link from "next/link";
 import { useTheme } from "next-themes";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Sun, Moon, Bookmark } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 export function Header() {
-  const { theme, setTheme, resolvedTheme } = useTheme();
+  const { setTheme, resolvedTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
+  const mountedRef = useRef(false);
 
   useEffect(() => {
-    setMounted(true);
-  }, []);
+    if (!mountedRef.current) {
+      mountedRef.current = true;
+      setMounted(true);
+    }
+  }, [setMounted]);
 
   const isDark = mounted ? resolvedTheme === "dark" : false;
 

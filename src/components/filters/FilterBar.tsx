@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useMemo } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { SlidersHorizontal, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -193,23 +193,22 @@ export function FilterBar() {
   const router = useRouter();
   const q = searchParams.get("q") || "";
 
-  const [filters, setFilters] = useState<ActiveFilters>(() =>
-    parseSearchParams(searchParams)
+  const urlFilters = useMemo(
+    () => parseSearchParams(searchParams),
+    [searchParams]
   );
+  const [editingFilters, setEditingFilters] =
+    useState<ActiveFilters>(urlFilters);
   const [sheetOpen, setSheetOpen] = useState(false);
 
-  useEffect(() => {
-    setFilters(parseSearchParams(searchParams));
-  }, [searchParams]);
-
   const applyFilters = useCallback(() => {
-    const queryString = buildSearchParams(filters, q);
+    const queryString = buildSearchParams(editingFilters, q);
     router.push(`/recipes?${queryString}`);
     setSheetOpen(false);
-  }, [filters, q, router]);
+  }, [editingFilters, q, router]);
 
   const clearFilters = useCallback(() => {
-    setFilters({
+    setEditingFilters({
       diet: [],
       health: [],
       mealType: [],
@@ -226,11 +225,11 @@ export function FilterBar() {
     }
   }, [q, router]);
 
-  const activeCount = getActiveCount(filters);
+  const activeCount = getActiveCount(editingFilters);
 
   const filterContent = (
     <div className="space-y-4">
-      <FilterContent filters={filters} setFilters={setFilters} />
+      <FilterContent filters={editingFilters} setFilters={setEditingFilters} />
 
       <div className="flex gap-2 pt-4">
         <Button onClick={applyFilters} className="flex-1">
