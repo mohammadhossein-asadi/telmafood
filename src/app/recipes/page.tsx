@@ -1,6 +1,6 @@
 "use client";
 
-import { Suspense } from "react";
+import { Suspense, useMemo } from "react";
 import { useSearchParams } from "next/navigation";
 import { SearchBar } from "@/components/search/SearchBar";
 import { FilterBar } from "@/components/filters/FilterBar";
@@ -8,7 +8,74 @@ import { RecipeGrid } from "@/components/recipe/RecipeGrid";
 import { RecipeCardSkeleton } from "@/components/recipe/RecipeCardSkeleton";
 import { Button } from "@/components/ui/button";
 import { useRecipes } from "@/lib/hooks/useRecipes";
-import type { FilterParams } from "@/lib/api/types";
+import type { FilterParams, Recipe } from "@/lib/api/types";
+
+function filterRecipes(recipes: Recipe[], searchParams: URLSearchParams) {
+  const mealType = searchParams.getAll("mealType");
+  const health = searchParams.getAll("health");
+  const diet = searchParams.getAll("diet");
+  const cuisineType = searchParams.getAll("cuisineType");
+  const dishType = searchParams.getAll("dishType");
+  const time = searchParams.get("time");
+  const ingr = searchParams.get("ingr");
+  const calories = searchParams.get("calories");
+
+  const hasFilters =
+    mealType.length > 0 ||
+    health.length > 0 ||
+    diet.length > 0 ||
+    cuisineType.length > 0 ||
+    dishType.length > 0 ||
+    !!time ||
+    !!ingr ||
+    !!calories;
+
+  if (!hasFilters) return recipes;
+
+  return recipes.filter((recipe) => {
+    if (mealType.length > 0 && !mealType.some((m) => recipe.mealType.includes(m))) return false;
+    if (health.length > 0 && !health.some((h) => recipe.healthLabels.some((rh) => rh.toLowerCase() === h.toLowerCase()))) return false;
+    if (diet.length > 0 && !diet.some((d) => recipe.dietLabels.some((rd) => rd.toLowerCase() === d.toLowerCase()))) return false;
+    if (cuisineType.length > 0 && !cuisineType.some((c) => recipe.cuisineType.includes(c))) return false;
+    if (dishType.length > 0 && !dishType.some((d) => recipe.dishType.includes(d))) return false;
+
+    if (time) {
+      const match = time.match(/^(\d+)-(\d+)$/);
+      if (match) {
+        const [, min, max] = match;
+        if (recipe.totalTime < Number(min) || recipe.totalTime > Number(max)) return false;
+      } else if (time.endsWith("+")) {
+        const min = parseInt(time);
+        if (recipe.totalTime < min) return false;
+      }
+    }
+
+    if (ingr) {
+      const match = ingr.match(/^(\d+)-(\d+)$/);
+      if (match) {
+        const [, min, max] = match;
+        const count = recipe.ingredientLines.length;
+        if (count < Number(min) || count > Number(max)) return false;
+      } else if (ingr.endsWith("+")) {
+        const min = parseInt(ingr);
+        if (recipe.ingredientLines.length < min) return false;
+      }
+    }
+
+    if (calories) {
+      const match = calories.match(/^(\d+)-(\d+)$/);
+      if (match) {
+        const [, min, max] = match;
+        if (recipe.calories < Number(min) || recipe.calories > Number(max)) return false;
+      } else if (calories.endsWith("+")) {
+        const min = parseInt(calories);
+        if (recipe.calories < min) return false;
+      }
+    }
+
+    return true;
+  });
+}
 
 function RecipesContent() {
   const searchParams = useSearchParams();
@@ -16,22 +83,19 @@ function RecipesContent() {
 
   const params: FilterParams = {
     q: q || undefined,
-    mealType: searchParams.getAll("mealType") || undefined,
-    health: searchParams.getAll("health") || undefined,
-    diet: searchParams.getAll("diet") || undefined,
-    cuisineType: searchParams.getAll("cuisineType") || undefined,
-    dishType: searchParams.getAll("dishType") || undefined,
-    time: searchParams.get("time") || undefined,
-    ingr: searchParams.get("ingr") || undefined,
-    calories: searchParams.get("calories") || undefined,
   };
 
   const { data, isLoading, isError, fetchNextPage, hasNextPage, isFetchingNextPage } =
     useRecipes(params);
 
-  const recipes = data?.pages.flatMap((page) =>
+  const allRecipes = data?.pages.flatMap((page) =>
     page.hits.map((hit) => hit.recipe)
   ) || [];
+
+  const recipes = useMemo(
+    () => filterRecipes(allRecipes, searchParams),
+    [allRecipes, searchParams]
+  );
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-8">
