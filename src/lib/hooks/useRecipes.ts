@@ -5,13 +5,15 @@ import { fetchRecipes, fetchRecipesByPage } from "@/lib/api/edamam";
 import type { FilterParams } from "@/lib/api/types";
 
 export function useRecipes(params: FilterParams) {
+  const { q } = params;
+
   return useInfiniteQuery({
-    queryKey: ["recipes", params],
+    queryKey: ["recipes", q || ""],
     queryFn: ({ pageParam }) => {
       if (pageParam) {
         return fetchRecipesByPage(pageParam);
       }
-      return fetchRecipes(params);
+      return fetchRecipes({ q });
     },
     initialPageParam: undefined as string | undefined,
     getNextPageParam: (lastPage) => {
