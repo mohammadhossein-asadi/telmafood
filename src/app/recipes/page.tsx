@@ -97,8 +97,19 @@ function RecipesContent() {
     [allRecipes, searchParams]
   );
 
+  const adPlacement = useMemo(() => {
+    const cuisine = searchParams.get("cuisineType");
+    const meal = searchParams.get("mealType");
+    const dish = searchParams.get("dishType");
+    if (cuisine) return `recipes-cuisine-${cuisine}`;
+    if (meal) return `recipes-meal-${meal}`;
+    if (dish) return `recipes-dish-${dish}`;
+    if (q) return `recipes-search-${q.slice(0, 12)}`;
+    return "recipes-browse";
+  }, [searchParams, q]);
+
   return (
-    <div className="mx-auto max-w-6xl px-4 py-8">
+    <div className="mx-auto max-w-[1280px] px-4 py-8">
       <div className="mb-6">
         <SearchBar defaultValue={q} placeholder="Search recipes..." />
       </div>
@@ -136,7 +147,7 @@ function RecipesContent() {
             </div>
           ) : (
             <>
-              <RecipeGrid recipes={recipes} />
+              <RecipeGrid recipes={recipes} adPlacement={adPlacement} />
 
               {hasNextPage && (
                 <div className="mt-8 text-center">
@@ -174,7 +185,7 @@ export default function RecipesPage() {
   return (
     <Suspense
       fallback={
-        <div className="mx-auto max-w-6xl px-4 py-8">
+        <div className="mx-auto max-w-[1280px] px-4 py-8">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {Array.from({ length: 9 }).map((_, i) => (
               <RecipeCardSkeleton key={i} />

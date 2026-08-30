@@ -1,7 +1,7 @@
 export function Footer() {
   return (
-    <footer className="py-8 border-t border-border bg-background">
-      <div className="mx-auto max-w-6xl px-4 text-center">
+    <footer className="py-8 border-t border-border bg-stone/40">
+      <div className="mx-auto max-w-[1280px] px-4 text-center">
         <p className="text-sm text-foreground/60">
           &copy; {new Date().getFullYear()} TelmaFood. Created by{" "}
           <a

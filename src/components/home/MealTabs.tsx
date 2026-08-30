@@ -49,10 +49,12 @@ function MealTabContent({ mealType }: { mealType: string }) {
 
   return (
     <div>
-      <RecipeGrid recipes={recipes.slice(0, 12)} />
-      <div className="mt-6 text-center">
+      <RecipeGrid recipes={recipes.slice(0, 12)} adPlacement={`meal-${mealType.toLowerCase()}`} />
+      <div className="mt-7 flex justify-center">
         <Link href={`/recipes?mealType=${encodeURIComponent(mealType)}`}>
-          <Button variant="outline">Show more {mealType.toLowerCase()} recipes</Button>
+          <Button variant="outline" className="rounded-full px-6">
+            Show more {mealType.toLowerCase()} recipes
+          </Button>
         </Link>
       </div>
     </div>

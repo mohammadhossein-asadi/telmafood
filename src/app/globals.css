@@ -32,17 +32,28 @@
   --color-chart-3: var(--chart-3);
   --color-chart-4: var(--chart-4);
   --color-chart-5: var(--chart-5);
+  --color-paper: var(--paper);
+  --color-stone: var(--stone);
+  --color-ink: var(--ink);
+  --color-ink-muted: var(--ink-muted);
+  --color-sponsored: var(--sponsored);
+  --color-sponsored-bg: var(--sponsored-bg);
+  --color-sponsored-border: var(--sponsored-border);
 
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
+  --radius-ad: var(--ad-radius);
+  --radius-ad-card: var(--ad-radius-card);
 
   --font-heading: "DM Serif Display", serif;
   --font-body: "DM Sans", sans-serif;
 
   --animate-accordion-down: accordion-down 0.2s ease-out;
   --animate-accordion-up: accordion-up 0.2s ease-out;
+  --animate-ad-enter: ad-enter 0.42s var(--ease-editorial) both;
+  --animate-ad-skeleton: ad-skeleton 1.4s ease-in-out infinite;
 }
 
 @keyframes accordion-down {
@@ -60,25 +71,25 @@
    ======================================== */
 
 :root {
-  --background: hsl(210, 33%, 98%);
-  --foreground: hsl(210, 11%, 15%);
+  --background: hsl(30, 20%, 97%);
+  --foreground: hsl(24, 10%, 15%);
   --card: hsl(0, 0%, 100%);
-  --card-foreground: hsl(210, 11%, 15%);
+  --card-foreground: hsl(24, 10%, 15%);
   --popover: hsl(0, 0%, 100%);
-  --popover-foreground: hsl(210, 11%, 15%);
+  --popover-foreground: hsl(24, 10%, 15%);
   --primary: hsl(17, 100%, 60%);
   --primary-hover: hsl(17, 100%, 52%);
   --primary-foreground: hsl(0, 0%, 100%);
   --secondary: hsl(200, 68%, 59%);
   --secondary-foreground: hsl(0, 0%, 100%);
-  --muted: hsl(210, 20%, 95%);
-  --muted-foreground: hsl(210, 8%, 45%);
-  --accent: hsl(200, 50%, 95%);
-  --accent-foreground: hsl(210, 11%, 15%);
+  --muted: hsl(30, 12%, 94%);
+  --muted-foreground: hsl(24, 6%, 45%);
+  --accent: hsl(30, 40%, 94%);
+  --accent-foreground: hsl(24, 10%, 15%);
   --destructive: hsl(1, 73%, 42%);
   --destructive-foreground: hsl(0, 0%, 100%);
-  --border: hsl(210, 15%, 90%);
-  --input: hsl(210, 12%, 80%);
+  --border: hsl(30, 12%, 88%);
+  --input: hsl(30, 10%, 80%);
   --ring: hsl(17, 100%, 60%);
   --chart-1: hsl(17, 100%, 60%);
   --chart-2: hsl(200, 68%, 59%);
@@ -87,12 +98,29 @@
   --chart-5: hsl(1, 73%, 42%);
   --radius: 0.75rem;
 
-  --primary-container: hsl(17, 100%, 96%);
-  --active-indicator: hsl(200, 50%, 95%);
-  --image-background: hsl(210, 20%, 92%);
-  --overlay: hsla(210, 11%, 15%, 0.5);
+  --primary-container: hsl(17, 90%, 96%);
+  --active-indicator: hsl(30, 30%, 93%);
+  --image-background: hsl(30, 12%, 90%);
+  --overlay: hsla(24, 10%, 15%, 0.5);
   --header-height: 64px;
   --mobile-nav-height: 80px;
+
+  /* Editorial / Ad tokens — light */
+  --paper: hsl(32, 40%, 98%);
+  --stone: hsl(30, 18%, 94%);
+  --ink: hsl(24, 12%, 13%);
+  --ink-muted: hsl(24, 6%, 42%);
+  --sponsored: hsl(28, 84%, 52%);
+  --sponsored-bg: hsl(30, 100%, 96%);
+  --sponsored-border: hsl(28, 40%, 84%);
+  --ad-radius: 20px;
+  --ad-radius-card: 16px;
+  --shadow-ad: 0 8px 28px rgba(16, 12, 8, 0.08), 0 1px 4px rgba(16, 12, 8, 0.1);
+  --shadow-ad-hover: 0 14px 36px rgba(16, 12, 8, 0.12), 0 2px 8px rgba(16, 12, 8, 0.1);
+  --ease-editorial: cubic-bezier(0.22, 0.61, 0.36, 1);
+  --duration-fast: 180ms;
+  --duration-med: 280ms;
+  --duration-slow: 420ms;
 }
 
 /* ========================================
@@ -100,25 +128,25 @@
    ======================================== */
 
 [data-theme="dark"] {
-  --background: hsl(210, 15%, 12%);
-  --foreground: hsl(210, 10%, 90%);
-  --card: hsl(210, 12%, 16%);
-  --card-foreground: hsl(210, 10%, 90%);
-  --popover: hsl(210, 12%, 16%);
-  --popover-foreground: hsl(210, 10%, 90%);
+  --background: hsl(24, 10%, 10%);
+  --foreground: hsl(30, 10%, 90%);
+  --card: hsl(24, 8%, 14%);
+  --card-foreground: hsl(30, 10%, 90%);
+  --popover: hsl(24, 8%, 14%);
+  --popover-foreground: hsl(30, 10%, 90%);
   --primary: hsl(17, 100%, 65%);
   --primary-hover: hsl(17, 100%, 58%);
   --primary-foreground: hsl(0, 0%, 100%);
   --secondary: hsl(200, 68%, 50%);
   --secondary-foreground: hsl(0, 0%, 100%);
-  --muted: hsl(210, 12%, 18%);
-  --muted-foreground: hsl(210, 8%, 55%);
-  --accent: hsl(200, 40%, 20%);
-  --accent-foreground: hsl(210, 10%, 90%);
+  --muted: hsl(24, 8%, 16%);
+  --muted-foreground: hsl(24, 6%, 55%);
+  --accent: hsl(30, 18%, 16%);
+  --accent-foreground: hsl(30, 10%, 90%);
   --destructive: hsl(1, 69%, 59%);
   --destructive-foreground: hsl(0, 0%, 100%);
-  --border: hsl(210, 10%, 22%);
-  --input: hsl(210, 10%, 28%);
+  --border: hsl(24, 8%, 20%);
+  --input: hsl(24, 8%, 26%);
   --ring: hsl(17, 100%, 65%);
   --chart-1: hsl(17, 100%, 65%);
   --chart-2: hsl(200, 68%, 50%);
@@ -126,10 +154,21 @@
   --chart-4: hsl(280, 45%, 50%);
   --chart-5: hsl(1, 69%, 59%);
 
-  --primary-container: hsl(210, 12%, 18%);
-  --active-indicator: hsl(200, 30%, 18%);
-  --image-background: hsl(210, 10%, 22%);
-  --overlay: hsla(210, 10%, 90%, 0.5);
+  --primary-container: hsl(24, 10%, 16%);
+  --active-indicator: hsl(30, 12%, 16%);
+  --image-background: hsl(24, 8%, 20%);
+  --overlay: hsla(30, 10%, 90%, 0.5);
+
+  /* Editorial / Ad tokens — dark */
+  --paper: hsl(24, 8%, 11%);
+  --stone: hsl(24, 6%, 16%);
+  --ink: hsl(30, 10%, 92%);
+  --ink-muted: hsl(24, 6%, 58%);
+  --sponsored: hsl(28, 70%, 54%);
+  --sponsored-bg: hsl(28, 22%, 16%);
+  --sponsored-border: hsl(28, 20%, 26%);
+  --shadow-ad: 0 8px 28px rgba(0, 0, 0, 0.35), 0 1px 4px rgba(0, 0, 0, 0.4);
+  --shadow-ad-hover: 0 14px 36px rgba(0, 0, 0, 0.45), 0 2px 8px rgba(0, 0, 0, 0.4);
 }
 
 /* ========================================
@@ -190,8 +229,8 @@ a {
 }
 
 /* ========================================
-   Hide scrollbar but keep scroll
-   ======================================== */
+    Hide scrollbar but keep scroll
+    ======================================== */
 
 .scrollbar-hide {
   -ms-overflow-style: none;
@@ -203,8 +242,91 @@ a {
 }
 
 /* ========================================
-   Reduced Motion Support
+   Editorial — Scroll snap & ad motion
    ======================================== */
+
+.scroll-snap-x {
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+}
+
+.scroll-snap-item {
+  scroll-snap-align: start;
+}
+
+@keyframes ad-enter {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes ad-skeleton {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.ad-skeleton-shimmer {
+  background: linear-gradient(90deg, var(--muted) 25%, color-mix(in oklab, var(--muted) 60%, white) 37%, var(--muted) 63%);
+  background-size: 400% 100%;
+  animation: ad-skeleton 1.4s ease-in-out infinite;
+}
+
+.ad-enter {
+  animation: ad-enter 0.42s var(--ease-editorial) both;
+}
+
+.ad-stagger > * {
+  opacity: 0;
+  animation: ad-enter 0.42s var(--ease-editorial) both;
+}
+
+.ad-stagger > *:nth-child(1) { animation-delay: 0ms; }
+.ad-stagger > *:nth-child(2) { animation-delay: 45ms; }
+.ad-stagger > *:nth-child(3) { animation-delay: 90ms; }
+.ad-stagger > *:nth-child(4) { animation-delay: 135ms; }
+.ad-stagger > *:nth-child(5) { animation-delay: 180ms; }
+.ad-stagger > *:nth-child(6) { animation-delay: 225ms; }
+
+.ad-card {
+  transition: transform var(--duration-med) var(--ease-editorial), box-shadow var(--duration-med) var(--ease-editorial);
+  box-shadow: var(--shadow-ad);
+}
+
+@media (hover: hover) {
+  .ad-card:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-ad-hover);
+  }
+}
+
+.ad-card:focus-within {
+  box-shadow: var(--shadow-ad-hover), 0 0 0 2px var(--ring);
+}
+
+/* Sponsored hairline accent */
+.sponsored-accent {
+  position: relative;
+}
+
+.sponsored-accent::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 16px;
+  right: 16px;
+  height: 2px;
+  background: linear-gradient(90deg, var(--sponsored), transparent 70%);
+  border-radius: 999px;
+  opacity: 0.85;
+}
+
+/* Dark image handling */
+[data-theme="dark"] .ad-image img {
+  filter: brightness(0.96) saturate(0.98);
+}
+
+/* ========================================
+    Reduced Motion Support
+    ======================================== */
 
 @media (prefers-reduced-motion: reduce) {
   *,
@@ -214,5 +336,12 @@ a {
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
+  }
+
+  .ad-enter,
+  .ad-stagger > * {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
   }
 }

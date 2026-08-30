@@ -8,6 +8,9 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { SaveButton } from "./SaveButton";
 import { extractIdFromUri } from "@/lib/api/edamam";
+import { AdContainer } from "@/components/ad/AdContainer";
+import { ContextualBanner, ContextualInline } from "@/components/ad/ContextualBanner";
+import { pickAd } from "@/lib/ads/mockAds";
 import type { Recipe } from "@/lib/api/types";
 
 interface RecipeDetailProps {
@@ -24,8 +27,14 @@ export function RecipeDetail({ recipe }: RecipeDetailProps) {
     recipe.images?.THUMBNAIL?.url ||
     recipe.image;
 
+  const contextKey = recipe.cuisineType?.[0] || recipe.dishType?.[0] || recipe.mealType?.[0] || "detail";
+  const detailAd = pickAd(0, `detail-${contextKey}`);
+  const inlineAd = pickAd(1, `detail-inline-${contextKey}`);
+
   return (
-    <article className="mx-auto max-w-4xl px-4 py-8">
+    <div className="mx-auto max-w-[1280px] px-4 py-8">
+      <div className="grid gap-8 lg:grid-cols-[1fr_340px] lg:items-start">
+        <article className="min-w-0">
       {/* Banner */}
       <div className="relative aspect-[21/9] md:aspect-[3/1] rounded-xl overflow-hidden bg-image-background mb-8">
         {bestImage ? (
@@ -142,6 +151,29 @@ export function RecipeDetail({ recipe }: RecipeDetailProps) {
           ))}
         </ul>
       </div>
-    </article>
+
+          {/* Mobile/Tablet contextual promo — inline after ingredients */}
+          <div className="lg:hidden">
+            <AdContainer ad={inlineAd} placement={`detail-inline-${contextKey}`} minHeight="180px" dismissible>
+              <ContextualInline ad={inlineAd} placement={`detail-inline-${contextKey}`} />
+            </AdContainer>
+          </div>
+        </article>
+
+        {/* Desktop sticky aside */}
+        <aside className="hidden lg:block sticky top-24 self-start space-y-6">
+          <AdContainer ad={detailAd} placement={`detail-aside-${contextKey}`} minHeight="420px" dismissible>
+            <ContextualBanner ad={detailAd} placement={`detail-aside-${contextKey}`} />
+          </AdContainer>
+
+          <div className="rounded-2xl border border-border bg-card p-5">
+            <h3 className="font-heading text-sm tracking-[-0.015em] text-foreground mb-2">Why sponsored?</h3>
+            <p className="text-xs leading-relaxed text-muted-foreground">
+              Partners support our free recipes. This recommendation is matched to <span className="text-foreground font-medium">{contextKey}</span> — never intrusive, always dismissible.
+            </p>
+          </div>
+        </aside>
+      </div>
+    </div>
   );
 }
