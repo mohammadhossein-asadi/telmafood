@@ -11,36 +11,54 @@ interface CuisineSliderProps {
   cuisine: string;
 }
 
+import { AdContainer } from "@/components/ad/AdContainer";
+import { SponsoredCard } from "@/components/ad/SponsoredCard";
+import { pickAd } from "@/lib/ads/mockAds";
+
 export function CuisineSlider({ title, cuisine }: CuisineSliderProps) {
   const { data, isLoading } = useRecipes({ cuisineType: [cuisine] });
 
   const recipes = data?.pages[0]?.hits.map((hit) => hit.recipe) || [];
+  const sliderAd = pickAd(0, `slider-${cuisine}`);
 
   return (
     <section className="py-8">
-      <div className="mx-auto max-w-6xl px-4">
+      <div className="mx-auto max-w-[1280px] px-4">
         <div className="flex items-center justify-between mb-6">
-          <h2 className="font-heading text-2xl md:text-3xl text-foreground">{title}</h2>
+          <h2 className="font-heading text-[22px] md:text-[26px] tracking-[-0.02em] text-foreground">{title}</h2>
           <Link href={`/recipes?cuisineType=${encodeURIComponent(cuisine)}`}>
-            <Button variant="ghost" className="text-primary hover:text-primary-hover">
+            <Button variant="ghost" className="rounded-full text-primary hover:text-primary-hover">
               Show more
             </Button>
           </Link>
         </div>
 
-        <div className="overflow-x-auto scrollbar-hide">
+        <div className="overflow-x-auto scrollbar-hide scroll-snap-x -mx-4 px-4">
           {isLoading ? (
             <div className="flex gap-4 pb-4">
               {Array.from({ length: 5 }).map((_, i) => (
-                <div key={i} className="flex-shrink-0 w-[280px]">
+                <div key={i} className="flex-shrink-0 w-[280px] scroll-snap-item">
                   <RecipeCardSkeleton />
                 </div>
               ))}
             </div>
           ) : (
             <div className="flex gap-4 pb-4">
-              {recipes.slice(0, 10).map((recipe) => (
-                <div key={recipe.uri} className="flex-shrink-0 w-[280px]">
+              {recipes.slice(0, 6).map((recipe) => (
+                <div key={recipe.uri} className="flex-shrink-0 w-[280px] scroll-snap-item">
+                  <RecipeCard recipe={recipe} />
+                </div>
+              ))}
+
+              {/* Native ad as last snap item — same dimensions, clearly sponsored */}
+              <div className="flex-shrink-0 w-[280px] scroll-snap-item">
+                <AdContainer ad={sliderAd} placement={`slider-${cuisine}`} minHeight="360px" dismissible>
+                  <SponsoredCard ad={sliderAd} placement={`slider-${cuisine}`} />
+                </AdContainer>
+              </div>
+
+              {recipes.slice(6, 10).map((recipe) => (
+                <div key={recipe.uri} className="flex-shrink-0 w-[280px] scroll-snap-item">
                   <RecipeCard recipe={recipe} />
                 </div>
               ))}
