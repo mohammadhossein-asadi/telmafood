@@ -21,8 +21,8 @@ export function Header() {
   const isDark = mounted ? resolvedTheme === "dark" : false;
 
   return (
-    <header className="sticky top-0 z-50 h-16 bg-background border-b border-border">
-      <div className="mx-auto max-w-6xl px-4 h-full flex items-center justify-between">
+    <header className="sticky top-0 z-50 h-16 bg-background/80 backdrop-blur-md border-b border-border">
+      <div className="mx-auto max-w-[1280px] px-4 h-full flex items-center justify-between">
         <Link href="/" className="flex items-center gap-2">
           <span className="font-heading text-xl font-medium text-primary">
             TelmaFood
