@@ -15,10 +15,11 @@ export async function GET(
   try {
     const response = await fetch(url);
     if (!response.ok) {
-      return NextResponse.json(
-        { error: `API error: ${response.statusText}` },
-        { status: response.status }
-      );
+      const message =
+        response.status === 429
+          ? "We've hit our recipe provider's rate limit. Please try again in a minute."
+          : `Recipe provider error: ${response.statusText}`;
+      return NextResponse.json({ error: message }, { status: response.status });
     }
     const data = await response.json();
     return NextResponse.json(data);
