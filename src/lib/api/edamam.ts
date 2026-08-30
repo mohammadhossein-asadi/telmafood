@@ -35,6 +35,22 @@ function buildQueryString(params: FilterParams): string {
   return parts.join("&");
 }
 
+interface ApiErrorPayload {
+  error?: string;
+}
+
+async function toErrorMessage(response: Response, fallback: string): Promise<string> {
+  try {
+    if (response.headers.get("content-type")?.includes("application/json")) {
+      const body = (await response.json()) as ApiErrorPayload;
+      return body.error || fallback;
+    }
+  } catch {
+    // ignore parse errors, fall through to fallback
+  }
+  return fallback;
+}
+
 export async function fetchRecipes(
   params: FilterParams
 ): Promise<EdamamResponse> {
@@ -43,7 +59,8 @@ export async function fetchRecipes(
 
   const response = await fetch(url);
   if (!response.ok) {
-    throw new Error(`Failed to fetch recipes: ${response.statusText}`);
+    const message = await toErrorMessage(response, `Failed to fetch recipes: ${response.statusText}`);
+    throw new Error(message);
   }
   return response.json();
 }
@@ -57,7 +74,8 @@ export async function fetchRecipesByPage(
 
   const response = await fetch(internalUrl);
   if (!response.ok) {
-    throw new Error(`Failed to fetch recipes: ${response.statusText}`);
+    const message = await toErrorMessage(response, `Failed to fetch recipes: ${response.statusText}`);
+    throw new Error(message);
   }
   return response.json();
 }
@@ -67,7 +85,8 @@ export async function fetchRecipeById(recipeId: string) {
     `/api/recipes/${encodeURIComponent(recipeId)}`
   );
   if (!response.ok) {
-    throw new Error(`Failed to fetch recipe: ${response.statusText}`);
+    const message = await toErrorMessage(response, `Failed to fetch recipe: ${response.statusText}`);
+    throw new Error(message);
   }
   return response.json();
 }

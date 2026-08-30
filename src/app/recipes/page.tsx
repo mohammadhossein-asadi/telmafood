@@ -6,8 +6,9 @@ import { SearchBar } from "@/components/search/SearchBar";
 import { FilterBar } from "@/components/filters/FilterBar";
 import { RecipeGrid } from "@/components/recipe/RecipeGrid";
 import { RecipeCardSkeleton } from "@/components/recipe/RecipeCardSkeleton";
-import { Button } from "@/components/ui/button";
+import { RecipeError } from "@/components/recipe/RecipeError";
 import { useRecipes } from "@/lib/hooks/useRecipes";
+import { useQueryClient } from "@tanstack/react-query";
 import type { FilterParams, Recipe } from "@/lib/api/types";
 
 function filterRecipes(recipes: Recipe[], searchParams: URLSearchParams) {
@@ -80,22 +81,20 @@ function filterRecipes(recipes: Recipe[], searchParams: URLSearchParams) {
 function RecipesContent() {
   const searchParams = useSearchParams();
   const q = searchParams.get("q") || "";
+  const queryClient = useQueryClient();
 
   const params: FilterParams = {
     q: q || undefined,
   };
 
-  const { data, isLoading, isError, fetchNextPage, hasNextPage, isFetchingNextPage } =
+  const { data, isLoading, isError, error, refetch, fetchNextPage, hasNextPage, isFetchingNextPage } =
     useRecipes(params);
 
-  const allRecipes = data?.pages.flatMap((page) =>
-    page.hits.map((hit) => hit.recipe)
-  ) || [];
-
-  const recipes = useMemo(
-    () => filterRecipes(allRecipes, searchParams),
-    [allRecipes, searchParams]
-  );
+  const recipes = useMemo(() => {
+    const allRecipes =
+      data?.pages.flatMap((page) => page.hits.map((hit) => hit.recipe)) || [];
+    return filterRecipes(allRecipes, searchParams);
+  }, [data, searchParams]);
 
   const adPlacement = useMemo(() => {
     const cuisine = searchParams.get("cuisineType");
@@ -131,14 +130,13 @@ function RecipesContent() {
               ))}
             </div>
           ) : isError ? (
-            <div className="text-center py-12">
-              <p className="text-base text-foreground/60 mb-4">
-                Failed to load recipes. Please try again.
-              </p>
-              <Button variant="outline" onClick={() => window.location.reload()}>
-                Try again
-              </Button>
-            </div>
+            <RecipeError
+              message={(error as Error | undefined)?.message}
+              onRetry={() => {
+                queryClient.removeQueries({ queryKey: ["recipes"] });
+                refetch();
+              }}
+            />
           ) : recipes.length === 0 ? (
             <div className="text-center py-12">
               <p className="text-base text-foreground/60">
