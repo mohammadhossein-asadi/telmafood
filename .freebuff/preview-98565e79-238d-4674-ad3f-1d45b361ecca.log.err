@@ -1,7 +1,0 @@
- ⚠ Found lockfile missing swc dependencies, patching...
- ⨯ Failed to patch lockfile, please try uninstalling and reinstalling next in this workspace
-TypeError: Cannot read properties of undefined (reading 'os')
-    at fetchPkgInfo (C:\Users\MohammadHossein\Desktop\projects\House-Rental-Website\node_modules\next\dist\lib\patch-incorrect-lockfile.js:73:25)
-    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
-    at async Promise.all (index 0)
-    at async patchIncorrectLockfile (C:\Users\MohammadHossein\Desktop\projects\House-Rental-Website\node_modules\next\dist\lib\patch-incorrect-lockfile.js:162:26)
