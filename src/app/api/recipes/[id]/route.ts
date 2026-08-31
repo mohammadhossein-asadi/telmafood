@@ -6,39 +6,45 @@ const APP_ID = process.env.EDAMAM_API_ID || "";
 const API_KEY = process.env.EDAMAM_API_KEY || "";
 const TYPE = "public";
 
+function withProviderHeader(data: unknown, provider: string) {
+  return NextResponse.json(data, {
+    headers: { "x-api-provider": provider },
+  });
+}
+
 export async function GET(
   _request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
   const { id } = await params;
 
-  // --- 1. Try Edamam first ---
-  const edamamUrl = `${API_BASE}/${id}?app_id=${APP_ID}&app_key=${API_KEY}&type=${TYPE}`;
-  try {
-    const response = await fetch(edamamUrl);
-    if (response.ok) {
-      const data = await response.json();
-      return NextResponse.json(data);
-    }
-  } catch {
-    // Fall through to backups
-  }
-
-  // --- 2. Fallback: TheMealDB ---
+  // --- 1. TheMealDB (primary — fast, no limits) ---
   try {
     const meal = await fetchFromMealDbById(id);
     if (meal) {
-      return NextResponse.json({ recipe: meal });
+      return withProviderHeader({ recipe: meal }, "themealdb");
     }
   } catch {
     // Fall through
   }
 
-  // --- 3. Fallback: DummyJSON ---
+  // --- 2. DummyJSON (secondary — structured data, no limits) ---
   try {
     const recipe = await fetchFromDummyJsonById(id);
     if (recipe) {
-      return NextResponse.json({ recipe });
+      return withProviderHeader({ recipe }, "dummyjson");
+    }
+  } catch {
+    // Fall through
+  }
+
+  // --- 3. Edamam (backup — highest quality, rate-limited) ---
+  const edamamUrl = `${API_BASE}/${id}?app_id=${APP_ID}&app_key=${API_KEY}&type=${TYPE}`;
+  try {
+    const response = await fetch(edamamUrl);
+    if (response.ok) {
+      const data = await response.json();
+      return withProviderHeader(data, "edamam");
     }
   } catch {
     // Fall through
