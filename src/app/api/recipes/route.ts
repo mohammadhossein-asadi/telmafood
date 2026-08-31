@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { fetchFromMealDb } from "@/lib/api/backup";
-import { fetchFromDummyJson } from "@/lib/api/backup";
+import { fetchFromMealDb, fetchFromDummyJson } from "@/lib/api/backup";
 import type { FilterParams } from "@/lib/api/types";
 
 const API_BASE = "https://api.edamam.com/api/recipes/v2";
@@ -22,10 +21,37 @@ function searchParamsToFilterParams(searchParams: URLSearchParams): FilterParams
   };
 }
 
+function withProviderHeader(data: unknown, provider: string) {
+  return NextResponse.json(data, {
+    headers: { "x-api-provider": provider },
+  });
+}
+
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
+  const filterParams = searchParamsToFilterParams(searchParams);
 
-  // --- 1. Try Edamam first ---
+  // --- 1. TheMealDB (primary — fast, no limits, broad coverage) ---
+  try {
+    const mealDbData = await fetchFromMealDb(filterParams);
+    if (mealDbData.hits.length > 0) {
+      return withProviderHeader(mealDbData, "themealdb");
+    }
+  } catch {
+    // TheMealDB failed — try DummyJSON
+  }
+
+  // --- 2. DummyJSON (secondary — structured data, no limits) ---
+  try {
+    const dummyData = await fetchFromDummyJson(filterParams);
+    if (dummyData.hits.length > 0) {
+      return withProviderHeader(dummyData, "dummyjson");
+    }
+  } catch {
+    // DummyJSON failed — try Edamam
+  }
+
+  // --- 3. Edamam (backup — highest quality, rate-limited) ---
   const params = new URLSearchParams();
   params.set("app_id", APP_ID);
   params.set("app_key", API_KEY);
@@ -39,32 +65,10 @@ export async function GET(request: NextRequest) {
     const response = await fetch(edamamUrl);
     if (response.ok) {
       const data = await response.json();
-      return NextResponse.json(data);
-    }
-    // If Edamam fails (including 429), fall through to backups
-  } catch {
-    // Network error — fall through to backups
-  }
-
-  // --- 2. Fallback: TheMealDB ---
-  const filterParams = searchParamsToFilterParams(searchParams);
-  try {
-    const mealDbData = await fetchFromMealDb(filterParams);
-    if (mealDbData.hits.length > 0) {
-      return NextResponse.json(mealDbData);
+      return withProviderHeader(data, "edamam");
     }
   } catch {
-    // TheMealDB failed — try DummyJSON
-  }
-
-  // --- 3. Fallback: DummyJSON ---
-  try {
-    const dummyData = await fetchFromDummyJson(filterParams);
-    if (dummyData.hits.length > 0) {
-      return NextResponse.json(dummyData);
-    }
-  } catch {
-    // DummyJSON also failed
+    // Edamam failed — all providers exhausted
   }
 
   // --- 4. All providers failed ---
