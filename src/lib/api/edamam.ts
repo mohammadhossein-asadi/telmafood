@@ -31,6 +31,9 @@ function buildQueryString(params: FilterParams): string {
     parts.push(`calories=${encodeURIComponent(params.calories)}`);
   if (params.time) parts.push(`time=${encodeURIComponent(params.time)}`);
   if (params.ingr) parts.push(`ingr=${encodeURIComponent(params.ingr)}`);
+  if (typeof params.skip === "number") parts.push(`skip=${params.skip}`);
+  if (typeof params.limit === "number") parts.push(`limit=${params.limit}`);
+  if (typeof params.page === "number") parts.push(`page=${params.page}`);
 
   return parts.join("&");
 }

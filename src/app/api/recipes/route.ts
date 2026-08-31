@@ -8,6 +8,10 @@ const API_KEY = process.env.EDAMAM_API_KEY || "";
 const TYPE = "public";
 
 function searchParamsToFilterParams(searchParams: URLSearchParams): FilterParams {
+  const skip = searchParams.get("skip");
+  const limit = searchParams.get("limit");
+  const page = searchParams.get("page");
+
   return {
     q: searchParams.get("q") || undefined,
     mealType: searchParams.getAll("mealType"),
@@ -18,6 +22,9 @@ function searchParamsToFilterParams(searchParams: URLSearchParams): FilterParams
     calories: searchParams.get("calories") || undefined,
     time: searchParams.get("time") || undefined,
     ingr: searchParams.get("ingr") || undefined,
+    skip: skip ? parseInt(skip, 10) : undefined,
+    limit: limit ? parseInt(limit, 10) : undefined,
+    page: page ? parseInt(page, 10) : undefined,
   };
 }
 
