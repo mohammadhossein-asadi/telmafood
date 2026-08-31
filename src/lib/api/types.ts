@@ -82,5 +82,8 @@ export interface FilterParams {
   calories?: string;
   time?: string;
   ingr?: string;
+  skip?: number;
+  limit?: number;
+  page?: number;
 }
 

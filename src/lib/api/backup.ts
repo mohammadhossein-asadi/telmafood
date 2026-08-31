@@ -118,7 +118,7 @@ function mealdbToRecipe(meal: MealDBMeal): Recipe {
   };
 }
 
-function mealdbToEdamam(meals: MealDBMeal[] | null): EdamamResponse {
+function mealdbToEdamam(meals: MealDBMeal[] | null, params?: FilterParams): EdamamResponse {
   if (!meals || meals.length === 0) {
     return { from: 0, to: 0, count: 0, _links: {}, hits: [] };
   }
@@ -126,12 +126,34 @@ function mealdbToEdamam(meals: MealDBMeal[] | null): EdamamResponse {
     recipe: mealdbToRecipe(m),
     _links: { self: { href: "", title: "" } },
   }));
+
+  const page = Number(params?.page) || 1;
+  const limit = Number(params?.limit) || 12;
+  const startIndex = (page - 1) * limit;
+  const pagedHits = hits.slice(startIndex, startIndex + limit);
+  const hasNextPage = startIndex + limit < hits.length;
+
+  const nextParams = new URLSearchParams();
+  if (params?.q) nextParams.set("q", params.q);
+  if (params?.cuisineType?.length) params.cuisineType.forEach((c) => nextParams.append("cuisineType", c));
+  if (params?.mealType?.length) params.mealType.forEach((m) => nextParams.append("mealType", m));
+  if (params?.dishType?.length) params.dishType.forEach((d) => nextParams.append("dishType", d));
+  nextParams.set("page", String(page + 1));
+  nextParams.set("limit", String(limit));
+
   return {
-    from: 1,
-    to: hits.length,
+    from: startIndex + 1,
+    to: startIndex + (pagedHits.length > 0 ? pagedHits.length : hits.length),
     count: hits.length,
-    _links: {},
-    hits,
+    _links: hasNextPage
+      ? {
+          next: {
+            href: `/api/recipes?${nextParams.toString()}`,
+            title: "Next Page",
+          },
+        }
+      : {},
+    hits: pagedHits.length > 0 ? pagedHits : hits,
   };
 }
 
@@ -155,7 +177,7 @@ function buildMealDbUrl(params: FilterParams): string {
     return `${MEALDB_BASE}/filter.php?i=${encodeURIComponent(ingredient)}`;
   }
 
-  // Default: search by name
+  // Default: search by name or general catalog
   return `${MEALDB_BASE}/search.php?s=${encodeURIComponent(q)}`;
 }
 
@@ -168,7 +190,7 @@ export async function fetchFromMealDb(
     throw new Error(`TheMealDB error: ${response.statusText}`);
   }
   const data = (await response.json()) as { meals: MealDBMeal[] | null };
-  return mealdbToEdamam(data.meals);
+  return mealdbToEdamam(data.meals, params);
 }
 
 export async function fetchFromMealDbById(id: string): Promise<Recipe | null> {
@@ -251,7 +273,7 @@ function dummyToRecipe(r: DummyRecipe): Recipe {
   };
 }
 
-function dummyToEdamam(data: DummySearchResponse): EdamamResponse {
+function dummyToEdamam(data: DummySearchResponse, params?: FilterParams): EdamamResponse {
   if (!data.recipes || data.recipes.length === 0) {
     return { from: 0, to: 0, count: 0, _links: {}, hits: [] };
   }
@@ -259,11 +281,27 @@ function dummyToEdamam(data: DummySearchResponse): EdamamResponse {
     recipe: dummyToRecipe(r),
     _links: { self: { href: "", title: "" } },
   }));
+
+  const nextSkip = data.skip + data.recipes.length;
+  const hasNext = nextSkip < data.total;
+
+  const nextParams = new URLSearchParams();
+  if (params?.q) nextParams.set("q", params.q);
+  nextParams.set("skip", String(nextSkip));
+  nextParams.set("limit", String(data.limit || 12));
+
   return {
     from: data.skip + 1,
     to: data.skip + hits.length,
     count: data.total,
-    _links: {},
+    _links: hasNext
+      ? {
+          next: {
+            href: `/api/recipes?${nextParams.toString()}`,
+            title: "Next Page",
+          },
+        }
+      : {},
     hits,
   };
 }
@@ -272,13 +310,17 @@ export async function fetchFromDummyJson(
   params: FilterParams
 ): Promise<EdamamResponse> {
   const q = params.q || "";
-  const url = `${DUMMY_BASE}/recipes/search?q=${encodeURIComponent(q)}&limit=20`;
+  const skip = params.skip || 0;
+  const limit = params.limit || 12;
+  const url = q
+    ? `${DUMMY_BASE}/recipes/search?q=${encodeURIComponent(q)}&limit=${limit}&skip=${skip}`
+    : `${DUMMY_BASE}/recipes?limit=${limit}&skip=${skip}`;
   const response = await fetch(url);
   if (!response.ok) {
     throw new Error(`DummyJSON error: ${response.statusText}`);
   }
   const data = (await response.json()) as DummySearchResponse;
-  return dummyToEdamam(data);
+  return dummyToEdamam(data, params);
 }
 
 export async function fetchFromDummyJsonById(
