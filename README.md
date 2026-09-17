@@ -7,7 +7,10 @@
 A modern recipe discovery app built with Next.js 16, featuring advanced multi-criteria filtering, infinite pagination, saved recipes, and a polished mobile-first UI — powered by the Edamam Recipe API.
 
 [![Live Demo](https://img.shields.io/badge/Live_Demo-Coming_Soon-0a0a0a?style=for-the-badge&labelColor=0a0a0a&color=3b82f6)](#)
-[![License: MIT](https://img.shields.io/badge/License-MIT-0a0a0a?style=for-the-badge&labelColor=0a0a0a&color=22c55e)](#)
+[![License: MIT](https://img.shields.io/badge/License-MIT-0a0a0a?style=for-the-badge&labelColor=0a0a0a&color=22c55e)](LICENSE)
+[![Next.js 16](https://img.shields.io/badge/Next.js_16-000000?style=for-the-badge&logo=next.js&logoColor=white)](https://nextjs.org/)
+[![React 19](https://img.shields.io/badge/React_19-61DAFB?style=for-the-badge&logo=react&logoColor=white)](https://react.dev/)
+[![TypeScript](https://img.shields.io/badge/TypeScript_5-3178C6?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 
 </div>
 
@@ -122,11 +125,15 @@ npm install
 
 ### Environment Configuration
 
-Create a `.env.local` file:
+Create a `.env.local` file (copy from `.env.example`):
 
 ```env
-NEXT_PUBLIC_EDAMAM_API_ID="your-api-id"
-NEXT_PUBLIC_EDAMAM_API_KEY="your-api-key"
+# Edamam Recipe API (Primary)
+EDAMAM_API_ID="your-edamam-app-id"
+EDAMAM_API_KEY="your-edamam-app-key"
+
+# AI Providers (for chat feature - optional)
+OPENROUTER_API_KEY="your-openrouter-key"
 ```
 
 ### Development
@@ -157,15 +164,36 @@ npm run start
 
 ---
 
-## Author
+## Key Architecture Decisions
 
-**Mohammadhossein Asadi** — Frontend & Full-Stack Engineer
+### URL-as-State for Shareable Links
+All filter state is synchronized with URL query parameters, enabling deep linking and shareable recipe searches without server-side state.
 
-[![GitHub](https://img.shields.io/badge/GitHub-mohammadhossein--asadi-0a0a0a?style=flat-square&logo=github)](https://github.com/mohammadhossein-asadi)
-[![LinkedIn](https://img.shields.io/badge/LinkedIn-mohammadhossein--asadi-0a66c2?style=flat-square&logo=linkedin)](https://linkedin.com/in/mohammadhossein-asadi)
+### Infinite Query Pattern
+React Query's `useInfiniteQuery` powers the "Load more" pagination, with automatic caching and background refetching for smooth UX.
+
+### Client-Side Rate Limiting
+A custom rate limiter (3 requests/second) with automatic retry on 429 responses prevents API abuse without server infrastructure.
+
+### Persistent Local Storage
+Zustand with `persist` middleware saves bookmarked recipes to localStorage, surviving browser restarts without a backend.
+
+### Mobile-First Responsive Design
+Bottom tab navigation on mobile, sidebar on desktop — single codebase with Tailwind's responsive utilities.
 
 ---
 
 ## License
 
 This project is licensed under the [MIT License](LICENSE).
+
+---
+
+<div align="center">
+
+**Mohammadhossein Asadi** — Frontend & Full-Stack Engineer
+
+[![GitHub](https://img.shields.io/badge/GitHub-mohammadhossein--asadi-0a0a0a?style=flat-square&logo=github)](https://github.com/mohammadhossein-asadi)
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-mohammadhossein--asadi-0a66c2?style=flat-square&logo=linkedin)](https://linkedin.com/in/mohammadhossein-asadi)
+
+</div>
