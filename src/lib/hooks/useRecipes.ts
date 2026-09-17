@@ -4,16 +4,14 @@ import { useInfiniteQuery } from "@tanstack/react-query";
 import { fetchRecipes, fetchRecipesByPage } from "@/lib/api/edamam";
 import type { FilterParams } from "@/lib/api/types";
 
-export function useRecipes(params: FilterParams) {
-  const { q } = params;
-
+export function useRecipes(params: FilterParams = {}) {
   return useInfiniteQuery({
-    queryKey: ["recipes", q || ""],
+    queryKey: ["recipes", params],
     queryFn: ({ pageParam }) => {
       if (pageParam) {
         return fetchRecipesByPage(pageParam);
       }
-      return fetchRecipes({ q });
+      return fetchRecipes(params);
     },
     initialPageParam: undefined as string | undefined,
     getNextPageParam: (lastPage) => {
