@@ -1,0 +1,8 @@
+{
+  "name": "TelmaFood",
+  "description": "Explore, search, and save recipes from around the world.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

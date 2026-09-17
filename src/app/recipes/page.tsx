@@ -83,12 +83,32 @@ function RecipesContent() {
   const q = searchParams.get("q") || "";
   const queryClient = useQueryClient();
 
-  const params: FilterParams = {
+  const params: FilterParams = useMemo(() => ({
     q: q || undefined,
-  };
+    mealType: searchParams.getAll("mealType"),
+    cuisineType: searchParams.getAll("cuisineType"),
+    dishType: searchParams.getAll("dishType"),
+    health: searchParams.getAll("health"),
+    diet: searchParams.getAll("diet"),
+  }), [q, searchParams]);
 
   const { data, isLoading, isError, error, refetch, fetchNextPage, hasNextPage, isFetchingNextPage } =
     useRecipes(params);
+
+  // Auto-fetch next page on scroll using IntersectionObserver
+  const sentinelRef = (node: HTMLDivElement | null) => {
+    if (!node || !hasNextPage || isFetchingNextPage) return;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0]?.isIntersecting) {
+          fetchNextPage();
+        }
+      },
+      { rootMargin: "350px" }
+    );
+    observer.observe(node);
+    return () => observer.disconnect();
+  };
 
   const recipes = useMemo(() => {
     const allRecipes =
@@ -147,28 +167,28 @@ function RecipesContent() {
             <>
               <RecipeGrid recipes={recipes} adPlacement={adPlacement} />
 
+              {/* Infinite Scroll Sentinel & Load More */}
               {hasNextPage && (
-                <div className="mt-8 text-center">
-                  <button
-                    onClick={() => fetchNextPage()}
-                    disabled={isFetchingNextPage}
-                    className="inline-flex items-center gap-2 px-6 py-3 bg-primary text-primary-foreground rounded-lg hover:bg-primary/80 transition-colors disabled:opacity-50"
-                  >
-                    {isFetchingNextPage ? (
-                      <>
-                        <div className="h-4 w-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                        Loading...
-                      </>
-                    ) : (
-                      "Load more recipes"
-                    )}
-                  </button>
+                <div ref={sentinelRef} className="mt-10 flex flex-col items-center justify-center p-4">
+                  {isFetchingNextPage ? (
+                    <div className="inline-flex items-center gap-3 px-5 py-2.5 rounded-full bg-muted text-foreground/80 text-sm font-medium animate-pulse">
+                      <div className="h-4 w-4 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+                      Loading more recipes...
+                    </div>
+                  ) : (
+                    <button
+                      onClick={() => fetchNextPage()}
+                      className="inline-flex items-center gap-2 px-6 py-2.5 border border-border bg-card hover:bg-muted text-foreground rounded-full text-sm font-medium transition-all cursor-pointer shadow-xs"
+                    >
+                      Scroll down to load more or click here
+                    </button>
+                  )}
                 </div>
               )}
 
               {!hasNextPage && recipes.length > 0 && (
-                <p className="text-center text-sm text-foreground/60 mt-8">
-                  No more recipes to show
+                <p className="text-center text-sm text-foreground/50 mt-10">
+                  You&apos;ve reached the end of the recipes
                 </p>
               )}
             </>
