@@ -9,7 +9,7 @@ import { RecipeCardSkeleton } from "@/components/recipe/RecipeCardSkeleton";
 import { RecipeError } from "@/components/recipe/RecipeError";
 import { useRecipes } from "@/lib/hooks/useRecipes";
 import { useQueryClient } from "@tanstack/react-query";
-import type { FilterParams, Recipe } from "@/lib/api/types";
+import type { FilterParams, EdamamRecipe as Recipe } from "@/lib/api/types";
 
 function filterRecipes(recipes: Recipe[], searchParams: URLSearchParams) {
   const mealType = searchParams.getAll("mealType");
