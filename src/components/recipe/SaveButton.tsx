@@ -4,7 +4,7 @@ import { Bookmark, BookmarkCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useRecipeStore } from "@/lib/store/recipeStore";
 import { toast } from "sonner";
-import type { Recipe } from "@/lib/api/types";
+import type { EdamamRecipe as Recipe } from "@/lib/api/types";
 
 interface SaveButtonProps {
   recipeId: string;

@@ -1,10 +1,11 @@
 import type {
   EdamamResponse,
-  Recipe,
+  EdamamRecipe as Recipe,
   RecipeHit,
   FilterParams,
   Ingredient,
 } from "./types";
+import { apiRateLimiter } from "./rate-limiter";
 
 // ---------------------------------------------------------------------------
 // TheMealDB — https://www.themealdb.com/api/json/v1/1/
@@ -332,4 +333,168 @@ export async function fetchFromDummyJsonById(
   }
   const r = (await response.json()) as DummyRecipe;
   return dummyToRecipe(r);
+}
+
+// ---------------------------------------------------------------------------
+// Edamam — https://api.edamam.com/api/recipes/v2
+// ---------------------------------------------------------------------------
+
+const EDAMAM_BASE = "https://api.edamam.com/api/recipes/v2";
+const EDAMAM_APP_ID = process.env.EDAMAM_API_ID || "";
+const EDAMAM_APP_KEY = process.env.EDAMAM_API_KEY || "";
+const EDAMAM_TYPE = "public";
+
+interface EdamamRecipe {
+  uri: string;
+  label: string;
+  image: string;
+  images: {
+    THUMBNAIL?: ImageSize;
+    SMALL?: ImageSize;
+    REGULAR?: ImageSize;
+    LARGE?: ImageSize;
+  };
+  source: string;
+  url: string;
+  shareAs: string;
+  yield: number;
+  dietLabels: string[];
+  healthLabels: string[];
+  cautions: string[];
+  ingredientLines: string[];
+  ingredients: Ingredient[];
+  calories: number;
+  totalWeight: number;
+  totalTime: number;
+  cuisineType: string[];
+  mealType: string[];
+  dishType: string[];
+  totalNutrients: Record<string, Nutrient>;
+  totalDaily: Record<string, Nutrient>;
+}
+
+interface EdamamApiResponse {
+  from: number;
+  to: number;
+  count: number;
+  _links: {
+    next?: {
+      href: string;
+      title: string;
+    };
+  };
+  hits: Array<{ recipe: EdamamRecipe }>;
+}
+
+interface ImageSize {
+  url: string;
+  width: number;
+  height: number;
+}
+
+interface Nutrient {
+  label: string;
+  quantity: number;
+  unit: string;
+}
+
+function edamamToRecipe(recipe: EdamamRecipe): Recipe {
+  return {
+    uri: recipe.uri,
+    label: recipe.label,
+    image: recipe.image,
+    images: recipe.images,
+    source: recipe.source,
+    url: recipe.url,
+    shareAs: recipe.shareAs,
+    yield: recipe.yield,
+    dietLabels: recipe.dietLabels,
+    healthLabels: recipe.healthLabels,
+    cautions: recipe.cautions,
+    ingredientLines: recipe.ingredientLines,
+    ingredients: recipe.ingredients,
+    calories: recipe.calories,
+    totalWeight: recipe.totalWeight,
+    totalTime: recipe.totalTime,
+    cuisineType: recipe.cuisineType,
+    mealType: recipe.mealType,
+    dishType: recipe.dishType,
+    totalNutrients: recipe.totalNutrients,
+    totalDaily: recipe.totalDaily,
+  };
+}
+
+function edamamToEdamamResponse(data: EdamamApiResponse): EdamamResponse {
+  return {
+    from: data.from,
+    to: data.to,
+    count: data.count,
+    _links: data._links,
+    hits: data.hits.map((hit) => ({
+      recipe: edamamToRecipe(hit.recipe),
+      _links: { self: { href: "", title: "" } },
+    })),
+  };
+}
+
+async function fetchWithRateLimit(url: string): Promise<Response> {
+  await apiRateLimiter.acquire("edamam");
+  const response = await fetch(url);
+  
+  if (response.status === 429) {
+    const retryAfter = response.headers.get("Retry-After");
+    const waitTime = retryAfter ? parseInt(retryAfter) * 1000 : 1000;
+    await new Promise((resolve) => setTimeout(resolve, waitTime));
+    await apiRateLimiter.acquire("edamam");
+    return fetch(url);
+  }
+  
+  return response;
+}
+
+export async function fetchFromEdamam(
+  params: FilterParams
+): Promise<EdamamResponse> {
+  const searchParams = new URLSearchParams();
+  searchParams.set("app_id", EDAMAM_APP_ID);
+  searchParams.set("app_key", EDAMAM_APP_KEY);
+  searchParams.set("type", EDAMAM_TYPE);
+  
+  if (params.q) searchParams.set("q", params.q);
+  params.mealType?.forEach((t) => searchParams.append("mealType", t));
+  params.health?.forEach((h) => searchParams.append("health", h));
+  params.diet?.forEach((d) => searchParams.append("diet", d));
+  params.cuisineType?.forEach((c) => searchParams.append("cuisineType", c));
+  params.dishType?.forEach((d) => searchParams.append("dishType", d));
+  if (params.calories) searchParams.set("calories", params.calories);
+  if (params.time) searchParams.set("time", params.time);
+  if (params.ingr) searchParams.set("ingr", params.ingr);
+
+  const url = `${EDAMAM_BASE}?${searchParams.toString()}`;
+  const response = await fetchWithRateLimit(url);
+  
+  if (!response.ok) {
+    throw new Error(`Edamam error: ${response.statusText}`);
+  }
+  
+  const data = (await response.json()) as EdamamApiResponse;
+  return edamamToEdamamResponse(data);
+}
+
+export async function fetchFromEdamamById(id: string): Promise<Recipe | null> {
+  const searchParams = new URLSearchParams();
+  searchParams.set("app_id", EDAMAM_APP_ID);
+  searchParams.set("app_key", EDAMAM_APP_KEY);
+  searchParams.set("type", EDAMAM_TYPE);
+
+  const url = `${EDAMAM_BASE}/${id}?${searchParams.toString()}`;
+  const response = await fetchWithRateLimit(url);
+  
+  if (!response.ok) {
+    if (response.status === 404) return null;
+    throw new Error(`Edamam error: ${response.statusText}`);
+  }
+  
+  const data = (await response.json()) as EdamamRecipe;
+  return edamamToRecipe(data);
 }
