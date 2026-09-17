@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import type { Recipe } from "@/lib/api/types";
+import type { EdamamRecipe as Recipe } from "@/lib/api/types";
 
 interface SavedRecipe {
   id: string;

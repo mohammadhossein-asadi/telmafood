@@ -1,0 +1,39 @@
+{
+  "name": "TelmaFood - Recipe Discovery",
+  "short_name": "TelmaFood",
+  "description": "Explore, search, and save your favorite recipes from around the world. Filter by cuisine, diet, meal type, and more.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f8f6f3",
+  "theme_color": "#e85d2a",
+  "orientation": "portrait-primary",
+  "scope": "/",
+  "icons": [
+    {
+      "src": "/images/logo-light.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["food", "lifestyle", "health"],
+  "screenshots": [],
+  "shortcuts": [
+    {
+      "name": "Search Recipes",
+      "short_name": "Search",
+      "description": "Search for recipes",
+      "url": "/recipes",
+      "icons": [{ "src": "/images/logo-light.svg", "sizes": "192x192" }]
+    },
+    {
+      "name": "Saved Recipes",
+      "short_name": "Saved",
+      "description": "View your saved recipes",
+      "url": "/saved",
+      "icons": [{ "src": "/images/logo-light.svg", "sizes": "192x192" }]
+    }
+  ],
+  "related_applications": [],
+  "prefer_related_applications": false
+}

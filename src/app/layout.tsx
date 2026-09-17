@@ -6,6 +6,8 @@ import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { MobileNav } from "@/components/layout/MobileNav";
 import { Toaster } from "@/components/ui/sonner";
+import { ChatWidget } from "@/components/ai/ChatWidget";
+import { ServiceWorkerRegistration } from "@/components/ServiceWorkerRegistration";
 import "./globals.css";
 
 const dmSans = DM_Sans({
@@ -61,6 +63,8 @@ export default function RootLayout({
       className={`${dmSans.variable} ${dmSerifDisplay.variable}`}
     >
       <head>
+        <link rel="manifest" href="/manifest.json" />
+        <meta name="theme-color" content="#e85d2a" />
         <script
           dangerouslySetInnerHTML={{
             __html: `
@@ -99,6 +103,8 @@ export default function RootLayout({
             <Footer />
             <MobileNav />
             <Toaster />
+            <ChatWidget />
+            <ServiceWorkerRegistration />
           </QueryProvider>
         </ThemeProvider>
       </body>
