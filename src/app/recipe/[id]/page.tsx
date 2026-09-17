@@ -1,21 +1,26 @@
 "use client";
 
-import { use } from "react";
+import { Suspense, useEffect, useState } from "react";
 import Link from "next/link";
 import { useRecipe } from "@/lib/hooks/useRecipe";
 import { RecipeDetail } from "@/components/recipe/RecipeDetail";
 import { RecipeDetailSkeleton } from "@/components/recipe/RecipeDetailSkeleton";
 import { Button } from "@/components/ui/button";
+import { RecipeChatWidget } from "@/components/ai/RecipeChatWidget";
 
-export default function RecipeDetailPage({
-  params,
-}: {
+interface RecipeDetailPageProps {
   params: Promise<{ id: string }>;
-}) {
-  const { id } = use(params);
-  const { data, isLoading, isError } = useRecipe(id);
+}
 
-  if (isLoading) {
+function RecipeDetailContent({ params }: RecipeDetailPageProps) {
+  const [recipeId, setRecipeId] = useState<string>("");
+  const { data, isLoading, isError } = useRecipe(recipeId);
+
+  useEffect(() => {
+    params.then((p) => setRecipeId(p.id));
+  }, [params]);
+
+  if (!recipeId || isLoading) {
     return <RecipeDetailSkeleton />;
   }
 
@@ -40,5 +45,18 @@ export default function RecipeDetailPage({
     );
   }
 
-  return <RecipeDetail recipe={data.recipe} />;
+  return (
+    <>
+      <RecipeDetail recipe={data.recipe} />
+      <RecipeChatWidget recipeId={recipeId} />
+    </>
+  );
+}
+
+export default function RecipeDetailPage({ params }: RecipeDetailPageProps) {
+  return (
+    <Suspense fallback={<RecipeDetailSkeleton />}>
+      <RecipeDetailContent params={params} />
+    </Suspense>
+  );
 }

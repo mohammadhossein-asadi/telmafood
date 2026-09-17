@@ -4,7 +4,7 @@ import { RecipeCard } from "./RecipeCard";
 import { SponsoredCard } from "@/components/ad/SponsoredCard";
 import { AdContainer } from "@/components/ad/AdContainer";
 import { pickAd } from "@/lib/ads/mockAds";
-import type { Recipe } from "@/lib/api/types";
+import type { EdamamRecipe as Recipe } from "@/lib/api/types";
 
 interface RecipeGridProps {
   recipes: Recipe[];

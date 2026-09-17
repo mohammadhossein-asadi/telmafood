@@ -1,10 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { fetchFromMealDbById, fetchFromDummyJsonById } from "@/lib/api/backup";
-
-const API_BASE = "https://api.edamam.com/api/recipes/v2";
-const APP_ID = process.env.EDAMAM_API_ID || "";
-const API_KEY = process.env.EDAMAM_API_KEY || "";
-const TYPE = "public";
+import { fetchFromMealDbById, fetchFromDummyJsonById, fetchFromEdamamById } from "@/lib/api/backup";
 
 function withProviderHeader(data: unknown, provider: string) {
   return NextResponse.json(data, {
@@ -39,12 +34,10 @@ export async function GET(
   }
 
   // --- 3. Edamam (backup — highest quality, rate-limited) ---
-  const edamamUrl = `${API_BASE}/${id}?app_id=${APP_ID}&app_key=${API_KEY}&type=${TYPE}`;
   try {
-    const response = await fetch(edamamUrl);
-    if (response.ok) {
-      const data = await response.json();
-      return withProviderHeader(data, "edamam");
+    const recipe = await fetchFromEdamamById(id);
+    if (recipe) {
+      return withProviderHeader({ recipe }, "edamam");
     }
   } catch {
     // Fall through

@@ -1,17 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
-import { fetchFromMealDb, fetchFromDummyJson } from "@/lib/api/backup";
-import type { FilterParams } from "@/lib/api/types";
-
-const API_BASE = "https://api.edamam.com/api/recipes/v2";
-const APP_ID = process.env.EDAMAM_API_ID || "";
-const API_KEY = process.env.EDAMAM_API_KEY || "";
-const TYPE = "public";
+import { fetchFromMealDb, fetchFromDummyJson, fetchFromEdamam } from "@/lib/api/backup";
+import { safeParseEdamamResponse, safeParseFilterParams, type FilterParams } from "@/lib/api/types";
 
 function searchParamsToFilterParams(searchParams: URLSearchParams): FilterParams {
-  const skip = searchParams.get("skip");
-  const limit = searchParams.get("limit");
-  const page = searchParams.get("page");
-
   return {
     q: searchParams.get("q") || undefined,
     mealType: searchParams.getAll("mealType"),
@@ -22,9 +13,9 @@ function searchParamsToFilterParams(searchParams: URLSearchParams): FilterParams
     calories: searchParams.get("calories") || undefined,
     time: searchParams.get("time") || undefined,
     ingr: searchParams.get("ingr") || undefined,
-    skip: skip ? parseInt(skip, 10) : undefined,
-    limit: limit ? parseInt(limit, 10) : undefined,
-    page: page ? parseInt(page, 10) : undefined,
+    skip: searchParams.get("skip") || undefined,
+    limit: searchParams.get("limit") || undefined,
+    page: searchParams.get("page") || undefined,
   };
 }
 
@@ -34,48 +25,59 @@ function withProviderHeader(data: unknown, provider: string) {
   });
 }
 
+function validateAndReturn(data: unknown, provider: string) {
+  const result = safeParseEdamamResponse(data);
+  if (!result.success) {
+    console.error(`[${provider}] Invalid response format:`, result.error);
+    return null;
+  }
+  return withProviderHeader(result.data, provider);
+}
+
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
   const filterParams = searchParamsToFilterParams(searchParams);
 
+  // Validate filter params
+  const filterValidation = safeParseFilterParams(filterParams);
+  if (!filterValidation.success) {
+    return NextResponse.json(
+      { error: "Invalid filter parameters" },
+      { status: 400 }
+    );
+  }
+
   // --- 1. TheMealDB (primary — fast, no limits, broad coverage) ---
   try {
-    const mealDbData = await fetchFromMealDb(filterParams);
+    const mealDbData = await fetchFromMealDb(filterValidation.data);
     if (mealDbData.hits.length > 0) {
-      return withProviderHeader(mealDbData, "themealdb");
+      const validated = validateAndReturn(mealDbData, "themealdb");
+      if (validated) return validated;
     }
-  } catch {
-    // TheMealDB failed — try DummyJSON
+  } catch (error) {
+    console.error("[themealdb] Error:", error);
   }
 
   // --- 2. DummyJSON (secondary — structured data, no limits) ---
   try {
-    const dummyData = await fetchFromDummyJson(filterParams);
+    const dummyData = await fetchFromDummyJson(filterValidation.data);
     if (dummyData.hits.length > 0) {
-      return withProviderHeader(dummyData, "dummyjson");
+      const validated = validateAndReturn(dummyData, "dummyjson");
+      if (validated) return validated;
     }
-  } catch {
-    // DummyJSON failed — try Edamam
+  } catch (error) {
+    console.error("[dummyjson] Error:", error);
   }
 
   // --- 3. Edamam (backup — highest quality, rate-limited) ---
-  const params = new URLSearchParams();
-  params.set("app_id", APP_ID);
-  params.set("app_key", API_KEY);
-  params.set("type", TYPE);
-  for (const [key, value] of searchParams.entries()) {
-    params.append(key, value);
-  }
-
-  const edamamUrl = `${API_BASE}?${params.toString()}`;
   try {
-    const response = await fetch(edamamUrl);
-    if (response.ok) {
-      const data = await response.json();
-      return withProviderHeader(data, "edamam");
+    const edamamData = await fetchFromEdamam(filterValidation.data);
+    if (edamamData.hits.length > 0) {
+      const validated = validateAndReturn(edamamData, "edamam");
+      if (validated) return validated;
     }
-  } catch {
-    // Edamam failed — all providers exhausted
+  } catch (error) {
+    console.error("[edamam] Error:", error);
   }
 
   // --- 4. All providers failed ---
