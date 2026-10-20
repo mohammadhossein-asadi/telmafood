@@ -35,9 +35,13 @@ TelmaFood is a recipe discovery platform that connects to the Edamam Recipe Sear
 | **Home Page** | Hero search, meal type tabs, cuisine slider carousels |
 | **Dark/Light Theme** | System-aware with next-themes |
 | **Mobile Navigation** | Bottom tab bar for mobile users |
-| **Rate Limiting** | Client-side rate limiter (3 req/s, retry on 429) |
+| **AI Assistant** | Streaming recipe chat: ask about a recipe, generate meal plans and shopping lists, get ingredient substitutions (multi-provider router with failover) |
+| **Sponsored Placements** | Ad-monetization layer — SponsoredCard, ContextualBanner, HeroPromo, PremiumPromoBlock with impression tracking and disclosure labels |
+| **Recipe Data Backup** | Secondary TheMealDB client keeps recipe lookup working when Edamam quota is exhausted, with request rate limiting (3 req/s) |
 | **URL-as-State** | Filter state synced with URL params for shareable links |
-| **Skeleton Loading** | Card and detail page loading skeletons |
+| **Skeleton Loading** | Card, route (streaming SSR), and detail page loading skeletons |
+| **PWA** | Installable app with service worker, offline shell, and manifest |
+| **SEO & A11y** | Open Graph/Twitter metadata, robots.txt, sitemap, skip-to-content link, radiogroup/search semantics |
 
 ---
 
@@ -52,7 +56,10 @@ TelmaFood is a recipe discovery platform that connects to the Edamam Recipe Sear
 | **Data Fetching** | TanStack React Query 5.101 |
 | **State** | Zustand 5 (persisted saved recipes) |
 | **Theme** | next-themes 0.4 |
-| **API** | Edamam Recipe Search API v2 |
+| **API** | Edamam Recipe Search API v2 (server-side) + TheMealDB backup |
+| **AI** | Multi-provider streaming router (OpenRouter, Groq, Hugging Face, Ollama) |
+| **Validation** | Zod |
+| **Testing** | Vitest, Testing Library, Playwright E2E |
 | **Icons** | Lucide React |
 | **Toast** | Sonner 2 |
 | **Font** | DM Sans, DM Serif Display (Google Fonts) |
@@ -66,26 +73,43 @@ telmafood/
 ├── src/
 │   ├── app/
 │   │   ├── page.tsx             # Home (hero + meal tabs + cuisine sliders)
-│   │   ├── recipes/page.tsx     # Search + filter + infinite grid
+│   │   ├── recipes/             # Search + filter + infinite grid (+ loading.tsx)
 │   │   ├── recipe/[id]/page.tsx # Recipe detail
-│   │   ├── saved/page.tsx       # Saved recipes
-│   │   └── layout.tsx           # Root layout
+│   │   ├── saved/               # Saved recipes (+ loading.tsx)
+│   │   ├── not-found.tsx        # 404 page
+│   │   ├── sitemap.ts           # Dynamic sitemap
+│   │   ├── global-error.tsx     # Global error boundary
+│   │   └── api/
+│   │       ├── recipes/         # Server-side Edamam proxy (+ [id] route)
+│   │       └── ai/              # Streaming AI endpoints (chat, meal plan,
+│   │                            #   recipe Q&A, shopping list, substitutions)
 │   ├── components/
+│   │   ├── ai/                  # ChatWidget, ChatInterface, useAIFeatures
+│   │   ├── ad/                  # AdContainer, SponsoredCard, ContextualBanner,
+│   │   │                        #   HeroPromo, PremiumPromoBlock, useAdImpression
 │   │   ├── filters/             # FilterBar, FilterAccordion, checkboxes, radios
 │   │   ├── home/                # Hero, MealTabs, CuisineSlider
 │   │   ├── layout/              # Header, Footer, MobileNav
-│   │   ├── recipe/              # RecipeCard, RecipeDetail, skeletons, SaveButton
+│   │   ├── recipe/              # RecipeCard/Grid/Detail, skeletons, SaveButton
 │   │   ├── search/              # SearchBar
-│   │   └── ui/                  # 14 shadcn/ui components
+│   │   ├── ui/                  # shadcn/ui primitives (base-nova)
+│   │   ├── ErrorBoundary.tsx    # App-level error boundary
+│   │   └── ServiceWorkerRegistration.tsx
 │   ├── lib/
+│   │   ├── ai/                  # Provider router (groq, openrouter, hf, ollama)
+│   │   ├── ads/                 # Mock ads, types, utils
 │   │   ├── api/
-│   │   │   ├── edamam.ts        # API client
-│   │   │   ├── rate-limiter.ts  # Rate limiter (3 req/s)
+│   │   │   ├── edamam.ts        # API client (calls internal /api/recipes)
+│   │   │   ├── backup.ts        # TheMealDB fallback with rate limiting
+│   │   │   ├── rate-limiter.ts  # Request pacing used by the backup client
+│   │   │   ├── schemas.ts       # Zod validation
 │   │   │   └── types.ts         # TypeScript interfaces
-│   │   ├── hooks/               # useRecipes, useRecipe, useDebounce
-│   │   ├── store/               # recipeStore, filterStore
+│   │   ├── hooks/               # useRecipes, useRecipe
+│   │   ├── store/               # recipeStore (persisted saved recipes)
 │   │   └── utils/               # constants (filter options)
-│   └── providers/               # QueryProvider, ThemeProvider
+│   ├── providers/               # QueryProvider, ThemeProvider
+│   └── test/                    # Vitest setup
+├── public/                      # manifest.json, sw.js, robots.txt, images
 ├── components.json
 ├── next.config.ts
 ├── tsconfig.json
@@ -161,6 +185,9 @@ npm run start
 | `npm run build` | Production build |
 | `npm run start` | Run production server |
 | `npm run lint` | ESLint |
+| `npm run typecheck` | `tsc --noEmit` |
+| `npm run test:run` | Vitest unit tests |
+| `npm run test:e2e` | Playwright E2E tests |
 
 ---
 
@@ -172,11 +199,14 @@ All filter state is synchronized with URL query parameters, enabling deep linkin
 ### Infinite Query Pattern
 React Query's `useInfiniteQuery` powers the "Load more" pagination, with automatic caching and background refetching for smooth UX.
 
-### Client-Side Rate Limiting
-A custom rate limiter (3 requests/second) with automatic retry on 429 responses prevents API abuse without server infrastructure.
+### Server-Side API Proxy
+Edamam API keys stay server-side: the client `edamam.ts` calls internal `/api/recipes` route handlers that forward requests to Edamam, so secrets never reach the browser bundle. The rate limiter only paces the secondary TheMealDB backup client.
 
 ### Persistent Local Storage
 Zustand with `persist` middleware saves bookmarked recipes to localStorage, surviving browser restarts without a backend.
+
+### Multi-Provider AI Router
+AI features stream through a pluggable provider router (OpenRouter, Groq, Hugging Face, Ollama) with failover, so the assistant degrades gracefully when a provider is unavailable.
 
 ### Mobile-First Responsive Design
 Bottom tab navigation on mobile, sidebar on desktop — single codebase with Tailwind's responsive utilities.

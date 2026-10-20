@@ -1,6 +1,6 @@
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-nocheck
-import "@testing-library/jest-dom";
+import "@testing-library/jest-dom/vitest";
 import { vi } from "vitest";
 
 // Mock Next.js navigation
@@ -66,7 +66,7 @@ const mockLucideIcons = () => {
   return { ...mockComponents };
 };
 
-vi.mock("lucide-react", mockLucideIcons);
+vi.mock("lucide-react", () => mockLucideIcons());
 
 // Mock sonner
 vi.mock("sonner", () => ({
