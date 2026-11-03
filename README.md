@@ -1,143 +1,181 @@
+# TelmaFood (تلما فود)
+
 <div align="center">
 
-# TelmaFood
+![TelmaFood Logo](public/logo.png)
 
-### Recipe Discovery Platform — Search, Filter, Save & Cook
+**Iranian Food Delivery & Restaurant Discovery Platform**
 
-A modern recipe discovery app built with Next.js 16, featuring advanced multi-criteria filtering, infinite pagination, saved recipes, and a polished mobile-first UI — powered by the Edamam Recipe API.
+[![Next.js](https://img.shields.io/badge/Next.js-15-black?logo=next.js&logoColor=white)](https://nextjs.org/)
+[![React](https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=black)](https://react.dev/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-v4-06B6D4?logo=tailwindcss&logoColor=white)](https://tailwindcss.com/)
+[![Prisma](https://img.shields.io/badge/Prisma-Latest-2D3748?logo=prisma&logoColor=white)](https://www.prisma.io/)
+[![NextAuth.js](https://img.shields.io/badge/NextAuth.js-Latest-FF6F61?logo=nextauth&logoColor=white)](https://next-auth.js.org/)
+[![License](https://img.shields.io/badge/License-MIT-green)](LICENSE)
 
-[![Live Demo](https://img.shields.io/badge/Live_Demo-Coming_Soon-0a0a0a?style=for-the-badge&labelColor=0a0a0a&color=3b82f6)](#)
-[![License: MIT](https://img.shields.io/badge/License-MIT-0a0a0a?style=for-the-badge&labelColor=0a0a0a&color=22c55e)](LICENSE)
-[![Next.js 16](https://img.shields.io/badge/Next.js_16-000000?style=for-the-badge&logo=next.js&logoColor=white)](https://nextjs.org/)
-[![React 19](https://img.shields.io/badge/React_19-61DAFB?style=for-the-badge&logo=react&logoColor=white)](https://react.dev/)
-[![TypeScript](https://img.shields.io/badge/TypeScript_5-3178C6?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[🇬🇧 English](#-telmafood-تلما-فود) • [🇮🇷 فارسی](README.fa.md) • [📖 Documentation](#-documentation) • [🚀 Quick Start](#-quick-start) • [🤝 Contributing](#-contributing)
 
 </div>
 
 ---
 
-## Overview
+## 🌟 Overview
 
-TelmaFood is a recipe discovery platform that connects to the Edamam Recipe Search API to provide access to thousands of recipes. Users can search by keyword, filter by meal type, diet, health labels, cuisine, dish type, cooking time, ingredient count, and calorie range — then save their favorites for later.
+**TelmaFood** is a **Persian-first food delivery and restaurant discovery platform** tailored for the **Iranian market**. Connect hungry customers with local restaurants, enable **real-time order tracking**, **smart recommendations**, **cash-on-delivery + Iranian gateways** (Zarinpal, Zibal, Mellat), and **restaurant management tools** — all with **full RTL, Jalali, and Persian numeral support**.
 
----
+### 🎯 Why TelmaFood?
 
-## Features
-
-| Feature | Description |
-|:--------|:------------|
-| **Keyword Search** | Free-text recipe search via Edamam API |
-| **8 Filter Categories** | Meal type, diet, health labels (34), cuisine (19), dish type (16), cooking time, ingredients, calories |
-| **Infinite Pagination** | "Load more" pattern with React Query infinite queries |
-| **Recipe Detail Pages** | Full recipe view with ingredients, nutrition, source link |
-| **Save/Bookmark** | Persistent local storage via Zustand with toast notifications |
-| **Saved Recipes Page** | View all bookmarked recipes |
-| **Home Page** | Hero search, meal type tabs, cuisine slider carousels |
-| **Dark/Light Theme** | System-aware with next-themes |
-| **Mobile Navigation** | Bottom tab bar for mobile users |
-| **AI Assistant** | Streaming recipe chat: ask about a recipe, generate meal plans and shopping lists, get ingredient substitutions (multi-provider router with failover) |
-| **Sponsored Placements** | Ad-monetization layer — SponsoredCard, ContextualBanner, HeroPromo, PremiumPromoBlock with impression tracking and disclosure labels |
-| **Recipe Data Backup** | Secondary TheMealDB client keeps recipe lookup working when Edamam quota is exhausted, with request rate limiting (3 req/s) |
-| **URL-as-State** | Filter state synced with URL params for shareable links |
-| **Skeleton Loading** | Card, route (streaming SSR), and detail page loading skeletons |
-| **PWA** | Installable app with service worker, offline shell, and manifest |
-| **SEO & A11y** | Open Graph/Twitter metadata, robots.txt, sitemap, skip-to-content link, radiogroup/search semantics |
+| Problem | TelmaFood Solution |
+|---------|-------------------|
+| International apps don't support Iran | **Built for Iran** — RTL, Jalali, Toman, Iranian payments |
+| No local restaurant discovery | **Neighborhood-based** — Tehran districts, major cities |
+| Cash-on-delivery not supported | **Native COD** + Zarinpal, Zibal, Mellat, Saman |
+| Restaurant tools in English | **Persian dashboard** — orders, menu, analytics, riders |
+| No rider app | **Dedicated rider app** — navigation, earnings, schedule |
 
 ---
 
-## Tech Stack
+## ✨ Features
 
-| Layer | Technologies |
-|:------|:-------------|
-| **Framework** | Next.js 16 (App Router) |
-| **Language** | TypeScript 5 |
-| **React** | React 19 |
-| **Styling** | Tailwind CSS 4, shadcn/ui |
-| **Data Fetching** | TanStack React Query 5.101 |
-| **State** | Zustand 5 (persisted saved recipes) |
-| **Theme** | next-themes 0.4 |
-| **API** | Edamam Recipe Search API v2 (server-side) + TheMealDB backup |
-| **AI** | Multi-provider streaming router (OpenRouter, Groq, Hugging Face, Ollama) |
-| **Validation** | Zod |
-| **Testing** | Vitest, Testing Library, Playwright E2E |
-| **Icons** | Lucide React |
-| **Toast** | Sonner 2 |
-| **Font** | DM Sans, DM Serif Display (Google Fonts) |
+### 🍽️ **Customer App**
+- **Restaurant discovery** — Map, list, filters (cuisine, rating, price, delivery time)
+- **Smart search** — Persian/Arabic script, voice, "near me", dietary tags
+- **Menu browsing** — Categories, photos, descriptions, allergens, spice level
+- **Cart & checkout** — COD, Zarinpal, Zibal, wallet, promo codes
+- **Real-time tracking** — Rider location, ETA, order status timeline
+- **Reviews & ratings** — Photos, Persian text, response from restaurant
+- **Favorites & history** — Reorder, dietary preferences, budget alerts
+
+### 🏪 **Restaurant Dashboard**
+- **Order management** — New, preparing, ready, picked up, delivered
+- **Menu management** — Categories, items, modifiers, photos, availability
+- **Analytics** — Revenue, orders, peak hours, popular items, customer retention
+- **Rider coordination** — Assign, track, communicate, payout
+- **Promotions** — Discounts, combos, loyalty, flash deals
+- **Settings** — Hours, delivery zone, fees, printer integration
+
+### 🛵 **Rider App (Mobile)**
+- **Order assignment** — Accept/reject, auto-assign by proximity
+- **Navigation** — Neshan/Balad maps, turn-by-turn, traffic
+- **Earnings** — Per order, tips, bonuses, weekly summary
+- **Schedule** — Shifts, availability, time-off requests
+- **Support** — Emergency button, chat support, rating
+
+### 💳 **Payments (Iranian Market)**
+| Method | Support |
+|--------|---------|
+| **Cash on Delivery** | Native, default, change calculation |
+| **Zarinpal** | Redirect, verify, refund |
+| **Zibal** | Redirect, verify, refund |
+| **Mellat Bank** | Sep, Sadad, IPG |
+| **Saman Bank** | Sep, IPG |
+| **Wallet** | In-app balance, top-up, cashback |
+
+### 🗺️ **Maps & Logistics**
+- **Iranian maps** — Neshan, Balad, OpenStreetMap (Iran tiles)
+- **Address system** — Persian neighborhoods, alleys (کوچه), plaques (پلاک)
+- **Delivery zones** — Polygon drawing, radius, time-based
+- **Route optimization** — Multiple orders, rider efficiency
+- **Traffic awareness** — Real-time (Neshan API), ETA adjustment
+
+### 🌍 **Persian-First Experience**
+| Feature | Implementation |
+|---------|----------------|
+| **RTL Layouts** | Tailwind RTL + CSS logical properties |
+| **Typography** | Vazirmatn for Persian |
+| **Calendar** | Jalali with Gregorian sync |
+| **Numerals** | Persian digits (۱۲۳) |
+| **Currency** | Toman/Rial (۱۰,۰۰۰ separator) |
+| **Addresses** | Persian format (استان، شهر، خیابان، کوچه، پلاک) |
+| **Voice** | Persian STT/TTS for search, rider |
 
 ---
 
-## Project Structure
+## 🏗️ Architecture
+
+### Tech Stack
+
+| Layer | Technology |
+|-------|------------|
+| **Framework** | Next.js (App Router) |
+| **Runtime** | React 19 |
+| **Language** | TypeScript 5 (Strict) |
+| **Styling** | Tailwind CSS v4 |
+| **Database** | PostgreSQL + Prisma ORM |
+| **Auth** | NextAuth.js |
+| **Payments** | Zarinpal, Zibal, Mellat, Saman |
+| **Maps** | Neshan, Balad, Leaflet |
+| **Real-time** | Pusher / Supabase Realtime |
+| **Mobile** | React Native + Expo (Rider app) |
+| **Deployment** | Vercel + PostgreSQL |
+
+### Project Structure
 
 ```
 telmafood/
+├── prisma/
+│   ├── schema.prisma
+│   └── migrations/
+├── public/
 ├── src/
 │   ├── app/
-│   │   ├── page.tsx             # Home (hero + meal tabs + cuisine sliders)
-│   │   ├── recipes/             # Search + filter + infinite grid (+ loading.tsx)
-│   │   ├── recipe/[id]/page.tsx # Recipe detail
-│   │   ├── saved/               # Saved recipes (+ loading.tsx)
-│   │   ├── not-found.tsx        # 404 page
-│   │   ├── sitemap.ts           # Dynamic sitemap
-│   │   ├── global-error.tsx     # Global error boundary
-│   │   └── api/
-│   │       ├── recipes/         # Server-side Edamam proxy (+ [id] route)
-│   │       └── ai/              # Streaming AI endpoints (chat, meal plan,
-│   │                            #   recipe Q&A, shopping list, substitutions)
-│   ├── components/
-│   │   ├── ai/                  # ChatWidget, ChatInterface, useAIFeatures
-│   │   ├── ad/                  # AdContainer, SponsoredCard, ContextualBanner,
-│   │   │                        #   HeroPromo, PremiumPromoBlock, useAdImpression
-│   │   ├── filters/             # FilterBar, FilterAccordion, checkboxes, radios
-│   │   ├── home/                # Hero, MealTabs, CuisineSlider
-│   │   ├── layout/              # Header, Footer, MobileNav
-│   │   ├── recipe/              # RecipeCard/Grid/Detail, skeletons, SaveButton
-│   │   ├── search/              # SearchBar
-│   │   ├── ui/                  # shadcn/ui primitives (base-nova)
-│   │   ├── ErrorBoundary.tsx    # App-level error boundary
-│   │   └── ServiceWorkerRegistration.tsx
-│   ├── lib/
-│   │   ├── ai/                  # Provider router (groq, openrouter, hf, ollama)
-│   │   ├── ads/                 # Mock ads, types, utils
+│   │   ├── (auth)/
+│   │   ├── (customer)/
+│   │   │   ├── restaurants/
+│   │   │   ├── cart/
+│   │   │   ├── checkout/
+│   │   │   ├── orders/
+│   │   │   └── profile/
+│   │   ├── (restaurant)/
+│   │   │   ├── dashboard/
+│   │   │   ├── orders/
+│   │   │   ├── menu/
+│   │   │   ├── analytics/
+│   │   │   └── settings/
+│   │   ├── (rider)/
+│   │   │   ├── orders/
+│   │   │   ├── earnings/
+│   │   │   └── schedule/
 │   │   ├── api/
-│   │   │   ├── edamam.ts        # API client (calls internal /api/recipes)
-│   │   │   ├── backup.ts        # TheMealDB fallback with rate limiting
-│   │   │   ├── rate-limiter.ts  # Request pacing used by the backup client
-│   │   │   ├── schemas.ts       # Zod validation
-│   │   │   └── types.ts         # TypeScript interfaces
-│   │   ├── hooks/               # useRecipes, useRecipe
-│   │   ├── store/               # recipeStore (persisted saved recipes)
-│   │   └── utils/               # constants (filter options)
-│   ├── providers/               # QueryProvider, ThemeProvider
-│   └── test/                    # Vitest setup
-├── public/                      # manifest.json, sw.js, robots.txt, images
-├── components.json
-├── next.config.ts
-├── tsconfig.json
-└── package.json
+│   │   │   ├── orders/
+│   │   │   ├── restaurants/
+│   │   │   ├── payments/
+│   │   │   ├── riders/
+│   │   │   └── webhooks/
+│   │   ├── globals.css
+│   │   └── layout.tsx
+│   ├── components/
+│   │   ├── ui/
+│   │   ├── customer/
+│   │   ├── restaurant/
+│   │   ├── rider/
+│   │   └── maps/
+│   ├── hooks/
+│   ├── lib/
+│   │   ├── prisma.ts
+│   │   ├── auth.ts
+│   │   ├── payments/
+│   │   ├── maps/
+│   │   └── utils.ts
+│   ├── store/
+│   └── types/
+├── rider-app/                    # React Native + Expo
+├── .env.example
+├── package.json
+└── README.md
 ```
 
 ---
 
-## Filtering System
-
-| Filter | Options |
-|:-------|:--------|
-| **Meal Type** | Breakfast, Lunch, Dinner, Snack, Teatime |
-| **Diet** | Balanced, High-Fiber, High-Protein, Low-Carb, Low-Fat, Low-Sodium |
-| **Health Labels** | 34 options (Vegan, Vegetarian, Gluten-Free, Keto-Friendly, etc.) |
-| **Cuisine** | 19 cuisines (American, Asian, French, Indian, Italian, Japanese, etc.) |
-| **Dish Type** | 16 types (Soup, Salad, Main course, Desserts, etc.) |
-| **Cooking Time** | 6 ranges (under 5 min to over 1 hour) |
-| **Ingredient Count** | 4 ranges |
-| **Calorie Range** | 5 ranges (under 200 to over 800) |
-
----
-
-## Quick Start
+## 🚀 Quick Start
 
 ### Prerequisites
 
-- **Node.js** >= 18.0.0
+- **Node.js** 20+
+- **PostgreSQL** 15+
+- **Payment gateway** credentials (Zarinpal, Zibal, etc.)
+- **Neshan/Balad** API key for maps
 
 ### Installation
 
@@ -145,85 +183,136 @@ telmafood/
 git clone https://github.com/mohammadhossein-asadi/telmafood.git
 cd telmafood
 npm install
-```
-
-### Environment Configuration
-
-Create a `.env.local` file (copy from `.env.example`):
-
-```env
-# Edamam Recipe API (Primary)
-EDAMAM_API_ID="your-edamam-app-id"
-EDAMAM_API_KEY="your-edamam-app-key"
-
-# AI Providers (for chat feature - optional)
-OPENROUTER_API_KEY="your-openrouter-key"
-```
-
-### Development
-
-```bash
+cp .env.example .env.local
+# Edit .env.local
+npm run db:generate
+npm run db:push
+npm run db:seed
 npm run dev
 ```
 
-Opens at `http://localhost:3000`.
+### Environment Variables
 
-### Production Build
+```env
+DATABASE_URL=postgresql://...
+NEXTAUTH_SECRET=...
+NEXTAUTH_URL=http://localhost:3000
 
-```bash
-npm run build
-npm run start
+# Payments
+ZARINPAL_MERCHANT_ID=...
+ZIBAL_MERCHANT_ID=...
+MELLAT_TERMINAL_ID=...
+MELLAT_USERNAME=...
+MELLAT_PASSWORD=...
+
+# Maps
+NESHAN_API_KEY=...
+BALAD_API_KEY=...
+
+# Real-time
+PUSHER_APP_ID=...
+PUSHER_KEY=...
+PUSHER_SECRET=...
+PUSHER_CLUSTER=...
 ```
 
 ---
 
-## Scripts
+## 🛠️ Development
 
-| Command | Description |
-|:--------|:------------|
-| `npm run dev` | Start Next.js dev server |
-| `npm run build` | Production build |
-| `npm run start` | Run production server |
-| `npm run lint` | ESLint |
-| `npm run typecheck` | `tsc --noEmit` |
-| `npm run test:run` | Vitest unit tests |
-| `npm run test:e2e` | Playwright E2E tests |
-
----
-
-## Key Architecture Decisions
-
-### URL-as-State for Shareable Links
-All filter state is synchronized with URL query parameters, enabling deep linking and shareable recipe searches without server-side state.
-
-### Infinite Query Pattern
-React Query's `useInfiniteQuery` powers the "Load more" pagination, with automatic caching and background refetching for smooth UX.
-
-### Server-Side API Proxy
-Edamam API keys stay server-side: the client `edamam.ts` calls internal `/api/recipes` route handlers that forward requests to Edamam, so secrets never reach the browser bundle. The rate limiter only paces the secondary TheMealDB backup client.
-
-### Persistent Local Storage
-Zustand with `persist` middleware saves bookmarked recipes to localStorage, surviving browser restarts without a backend.
-
-### Multi-Provider AI Router
-AI features stream through a pluggable provider router (OpenRouter, Groq, Hugging Face, Ollama) with failover, so the assistant degrades gracefully when a provider is unavailable.
-
-### Mobile-First Responsive Design
-Bottom tab navigation on mobile, sidebar on desktop — single codebase with Tailwind's responsive utilities.
+```bash
+npm run dev          # Dev server
+npm run build        # Production build
+npm run start        # Production server
+npm run db:studio    # Prisma Studio
+npm run lint         # ESLint
+npm test             # Vitest
+```
 
 ---
 
-## License
+## 📚 Documentation
 
-This project is licensed under the [MIT License](LICENSE).
+| Document | Description |
+|----------|-------------|
+| [Architecture](docs/ARCHITECTURE.md) | System design |
+| [Payments](docs/PAYMENTS.md) | Iranian gateways integration |
+| [Maps](docs/MAPS.md) | Neshan/Balad integration |
+| [Rider App](docs/RIDER_APP.md) | React Native app |
+| [Deployment](docs/DEPLOYMENT.md) | Vercel guide |
+
+---
+
+## 🚀 Deployment
+
+### Vercel + Neon
+
+```bash
+vercel --prod
+# Add env vars
+# Connect Neon PostgreSQL
+```
+
+---
+
+## 🔒 Security
+
+- **NextAuth.js** sessions
+- **Prisma** SQL injection prevention
+- **Zod** validation
+- **Rate limiting** on payments
+- **CSP** headers
+- **PCI DSS** awareness for payments
+
+---
+
+## 🤝 Contributing
+
+See [CONTRIBUTING.md](CONTRIBUTING.md)
+
+---
+
+## 📋 Roadmap
+
+- [x] Customer app + restaurant dashboard
+- [x] COD + Iranian payments
+- [x] Real-time tracking
+- [x] Persian RTL + Jalali
+- [ ] Rider mobile app (React Native)
+- [ ] AI recommendations
+- [ ] Loyalty program
+- [ ] Dark kitchen support
+- [ ] Franchise management
+- [ ] White-label for cities
+
+---
+
+## 📄 License
+
+**MIT License** — See [LICENSE](LICENSE)
+
+---
+
+## 🙏 Acknowledgments
+
+- **Next.js**, **Prisma**, **NextAuth.js**, **Tailwind CSS**
+- **Zarinpal**, **Zibal**, **Mellat**, **Saman** — Payment gateways
+- **Neshan**, **Balad** — Iranian maps
+- **Vazirmatn Font** — Persian typography
+
+---
+
+## 📞 Support & Community
+
+- **Issues**: [GitHub Issues](https://github.com/mohammadhossein-asadi/telmafood/issues)
+- **Discussions**: [GitHub Discussions](https://github.com/mohammadhossein-asadi/telmafood/discussions)
 
 ---
 
 <div align="center">
 
-**Mohammadhossein Asadi** — Frontend & Full-Stack Engineer
+**Built with ❤️ for Iranian food lovers & restaurants**
 
-[![GitHub](https://img.shields.io/badge/GitHub-mohammadhossein--asadi-0a0a0a?style=flat-square&logo=github)](https://github.com/mohammadhossein-asadi)
-[![LinkedIn](https://img.shields.io/badge/LinkedIn-mohammadhossein--asadi-0a66c2?style=flat-square&logo=linkedin)](https://linkedin.com/in/mohammadhossein-asadi)
+[🇬🇧 English](README.md) • [🇮🇷 فارسی](README.fa.md) • [⭐ Star us on GitHub](https://github.com/mohammadhossein-asadi/telmafood)
 
 </div>
